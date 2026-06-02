@@ -1,0 +1,62 @@
+enum AuthTokenType {
+  UNDEFINED
+  EMAIL_VERIFICATION
+  PASSWORD_RESET
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String   @id @default(cuid())
+  email           String   @unique
+  password        String
+  name            String
+  loginTimeNumber Int      @default(0)
+  createdAt       DateTime @default(now())
+  emailVerifiedAt DateTime?
+
+  userSetting     UserSetting?
+  authTokens     AuthToken[]
+  notes           Note[]
+}
+
+model AuthToken {
+  id        String   @id @default(cuid())
+
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  authTokenType AuthTokenType
+
+  @@index([userId])
+}
+
+model UserSetting {
+  id        String @id @default(cuid())
+  userId    String  @unique
+  user      User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  hasNotifyLoginEmail Boolean @default(true)
+}
+
+model Note {
+  id        String   @id @default(cuid())
+  title     String
+  content   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}

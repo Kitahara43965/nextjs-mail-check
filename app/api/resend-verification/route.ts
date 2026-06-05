@@ -4,10 +4,10 @@ import { resendVerification } from "@/services/auth/resend-verification.service"
 import { ResendVerificationResult } from "@/types/resend-verification-result.type";
 import { 
   ResendVerificationKind,
-  getResendVerificationUserKindFromResendVerificationKind 
+  getAuthTokenTypeFromResendVerificationKind 
 } from "@/constants/resend-verification-kind.constant";
-import { ResendVerificationUserKind } from "@/constants/resend-verification-user-kind.constant";
 import type { User, AuthToken } from "@prisma/client";
+import { AuthTokenType} from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 
 export async function POST(req: Request) {
@@ -25,7 +25,7 @@ export async function POST(req: Request) {
   let emailUser: User|null = null;
   let userId: string|null = null;
   let resendVerificationKind:number = ResendVerificationKind.UNDEFINED;
-  let resendVerificationUserKind:number = ResendVerificationUserKind.UNDEFINED;
+  let authTokenType:AuthTokenType = AuthTokenType.UNDEFINED;
 
   if (typeof stringRawResendVerificationKind === "string") {
     stringResendVerificationKind = stringRawResendVerificationKind;
@@ -39,20 +39,20 @@ export async function POST(req: Request) {
     });
   }//rawEmail
 
-  resendVerificationUserKind = 
-    getResendVerificationUserKindFromResendVerificationKind(
+  authTokenType = 
+    getAuthTokenTypeFromResendVerificationKind(
       resendVerificationKind
     );
     
-  if(resendVerificationUserKind === ResendVerificationUserKind.SESSION){
-    if(session){
+  if(authTokenType === AuthTokenType.EMAIL_VERIFICATION){
+    if(session && session.user){
       userId = session.user.id;
     }//session
-  }else if(resendVerificationUserKind === ResendVerificationUserKind.EMAIL){
+  }else if(authTokenType === AuthTokenType.PASSWORD_RESET){
     if(emailUser){
       userId = emailUser.id;
     }//emailUser
-  }//resendVerificationUserKind
+  }//authTokenType
   
   resendVerificationResult = await resendVerification(
     userId,

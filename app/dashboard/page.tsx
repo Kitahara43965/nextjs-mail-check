@@ -3,15 +3,9 @@
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
-import LogoutButton from "@/app/components/LogoutButton";
 import type { Note } from "@prisma/client";
 import { z } from "zod";
-
-type FieldErrors = {
-  title?: string;
-  content?: string;
-  general?: string;
-};
+import LogoutButton from "@/components/LogoutButton";
 
 /** ========= ZOD ========= */
 const noteSchema = z.object({
@@ -19,10 +13,12 @@ const noteSchema = z.object({
   content: z.string().min(1, "内容を入力してください"),
 });
 
-/** editも同じ */
-const editSchema = noteSchema;
+type FieldErrors = {
+  title?: string;
+  content?: string;
+  general?: string;
+};
 
-/** ========= component ========= */
 export default function DashboardPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -31,85 +27,84 @@ export default function DashboardPage() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
 
-  const [loading, setLoading] = useState(false);
-  const [editingId, setEditingId] = useState<string | null>(null);
+  const [creating, setCreating] = useState(false);
+  const [updating, setUpdating] = useState(false);
 
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [editTitle, setEditTitle] = useState("");
   const [editContent, setEditContent] = useState("");
+  const [loading, setLoading] = useState(true);
 
   const [createErrors, setCreateErrors] = useState<FieldErrors>({});
   const [editErrors, setEditErrors] = useState<FieldErrors>({});
 
-  useEffect(() => {
-    if (status === "unauthenticated") router.push("/login");
-  }, [status, router]);
-
-  const fetchNotes = useCallback(async () => {
+  /** ========= fetch notes ========= */
+  const fetchNotes = async () => {
     const res = await fetch("/api/notes");
-    if (!res.ok) return;
-    setNotes(await res.json());
-  }, []);
+    if (!res.ok) return null;
+    return res.json();
+  };
 
   useEffect(() => {
-    let ignore = false;
+    if (status !== "authenticated") return;
 
-    const fetchNotes = async () => {
+    const run = async () => {
       const res = await fetch("/api/notes");
-      if (!res.ok) return;
-
       const data = await res.json();
 
-      if (!ignore) {
-        setNotes(data);
+      if (data.isVerificationEmailSent) {
+        router.push("/verify");
+        return;
       }
+
+      setNotes(data.notes);
+      setLoading(false);
     };
 
-    fetchNotes();
-
-    return () => {
-      ignore = true;
-    };
-  }, []);
+    run();
+  }, [status, router]);
 
   /** ========= CREATE ========= */
   const createNote = async () => {
-    setCreateErrors({});
-
     const result = noteSchema.safeParse({ title, content });
 
-    if (!result.success) {
-      const f = result.error.flatten().fieldErrors;
-      setCreateErrors({
-        title: f.title?.[0],
-        content: f.content?.[0],
-      });
-      return;
-    }
+    if (!result.success) return;
 
-    setLoading(true);
+    setCreating(true);
 
     try {
-      await fetch("/api/notes", {
+      const res = await fetch("/api/notes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(result.data),
       });
 
+      const data = await res.json();
+
+      // 👇ここが重要
+      setNotes((prev) => [data.note, ...prev]);
+
       setTitle("");
       setContent("");
-      await fetchNotes();
     } finally {
-      setLoading(false);
+      setCreating(false);
     }
   };
 
   /** ========= EDIT ========= */
+  const startEdit = (note: Note) => {
+    setEditingId(note.id);
+    setEditTitle(note.title);
+    setEditContent(note.content || "");
+    setEditErrors({});
+  };
+
   const updateNote = async () => {
     if (!editingId) return;
 
     setEditErrors({});
 
-    const result = editSchema.safeParse({
+    const result = noteSchema.safeParse({
       title: editTitle,
       content: editContent,
     });
@@ -123,41 +118,50 @@ export default function DashboardPage() {
       return;
     }
 
-    setLoading(true);
-
+    setUpdating(true);
     try {
-      await fetch(`/api/notes/${editingId}`, {
+      const res = await fetch(`/api/notes/${editingId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(result.data),
       });
 
+      const data = await res.json();
+
+      setNotes((prev) =>
+        prev.map((n) =>
+          n.id === editingId ? data.note : n
+        )
+      );
+
       setEditingId(null);
-      await fetchNotes();
     } finally {
-      setLoading(false);
+      setUpdating(false);
     }
   };
 
-  const startEdit = (note: Note) => {
-    setEditingId(note.id);
-    setEditTitle(note.title);
-    setEditContent(note.content || "");
-    setEditErrors({});
-  };
-
+  /** ========= DELETE ========= */
   const deleteNote = async (id: string) => {
     await fetch(`/api/notes/${id}`, { method: "DELETE" });
     setNotes((prev) => prev.filter((n) => n.id !== id));
   };
 
+  if (status === "loading" || loading) {
+    return <p>読み込み中...</p>;
+  }
+  
   return (
     <div className="max-w-3xl mx-auto mt-10 p-6 bg-white shadow rounded-lg">
-      <h1 className="text-3xl font-bold mb-4">メモアプリ</h1>
-      <p className="mb-6">ようこそ {session?.user?.name}</p>
+      {/* ヘッダー */}
+      <header className="mb-6">
+        <h1 className="text-3xl font-bold">メモアプリ</h1>
+        <p className="text-gray-600">ようこそ {session?.user?.name}</p>
+      </header>
 
-      {/* CREATE */}
-      <div className="mb-6">
+      {/* ========= CREATE ========= */}
+      <section className="mb-8 border-b pb-6">
+        <h2 className="text-lg font-semibold mb-3">新規作成</h2>
+
         <input
           className="border p-2 w-full mb-1"
           value={title}
@@ -186,78 +190,92 @@ export default function DashboardPage() {
 
         <button
           onClick={createNote}
-          disabled={loading}
+          disabled={creating}
           className="bg-blue-500 text-white px-4 py-2 rounded"
         >
-          {loading ? "作成中..." : "追加"}
+          {creating ? "追加中..." : "追加"}
         </button>
-      </div>
+      </section>
 
-      {/* LIST */}
-      <div className="space-y-3">
-        {notes.map((note) => (
-          <div key={note.id} className="border p-3 rounded">
-            {editingId === note.id ? (
-              <>
-                <input
-                  className="border p-1 w-full mb-1"
-                  value={editTitle}
-                  onChange={(e) => {
-                    setEditTitle(e.target.value);
-                    setEditErrors((p) => ({ ...p, title: undefined }));
-                  }}
-                />
-                {editErrors.title && (
-                  <p className="text-red-500 text-sm mb-1">
-                    {editErrors.title}
+      {/* ========= LIST ========= */}
+      <section className="space-y-3">
+        {notes.length === 0 ? (
+          <p className="text-gray-500">まだメモがありません</p>
+        ) : (
+          notes.map((note) => (
+            <article key={note.id} className="border p-3 rounded">
+              <div className="flex gap-4 text-xs text-gray-500">
+                <p>作成: {new Date(note.createdAt).toLocaleString()}</p>
+                <span>•</span>
+                <p>更新: {new Date(note.updatedAt).toLocaleString()}</p>
+              </div>
+              {editingId === note.id ? (
+                <>
+                  {/* EDIT MODE */}
+                  <input
+                    className="border p-1 w-full mb-1"
+                    value={editTitle}
+                    onChange={(e) => {
+                      setEditTitle(e.target.value);
+                      setEditErrors((p) => ({ ...p, title: undefined }));
+                    }}
+                  />
+                  {editErrors.title && (
+                    <p className="text-red-500 text-sm mb-1">
+                      {editErrors.title}
+                    </p>
+                  )}
+
+                  <textarea
+                    className="border p-1 w-full mb-1"
+                    value={editContent}
+                    onChange={(e) => {
+                      setEditContent(e.target.value);
+                      setEditErrors((p) => ({ ...p, content: undefined }));
+                    }}
+                  />
+                  {editErrors.content && (
+                    <p className="text-red-500 text-sm mb-1">
+                      {editErrors.content}
+                    </p>
+                  )}
+
+                  <button
+                    onClick={updateNote}
+                    className="text-green-600"
+                  >
+                    {updating ? "保存中..." : "保存"}
+                  </button>
+                </>
+              ) : (
+                <>
+                  {/* VIEW MODE */}
+                  <h3 className="font-bold">{note.title}</h3>
+                  <p className="text-gray-700 whitespace-pre-wrap">
+                    {note.content}
                   </p>
-                )}
 
-                <textarea
-                  className="border p-1 w-full mb-1"
-                  value={editContent}
-                  onChange={(e) => {
-                    setEditContent(e.target.value);
-                    setEditErrors((p) => ({ ...p, content: undefined }));
-                  }}
-                />
-                {editErrors.content && (
-                  <p className="text-red-500 text-sm mb-1">
-                    {editErrors.content}
-                  </p>
-                )}
+                  <div className="mt-2 flex gap-3">
+                    <button
+                      onClick={() => startEdit(note)}
+                      className="text-blue-500"
+                    >
+                      編集
+                    </button>
 
-                <button onClick={updateNote} className="text-green-600">
-                  保存
-                </button>
-              </>
-            ) : (
-              <>
-                <h3 className="font-bold">{note.title}</h3>
-                <p>{note.content}</p>
-
-                <button
-                  onClick={() => startEdit(note)}
-                  className="text-blue-500 mr-2"
-                >
-                  編集
-                </button>
-
-                <button
-                  onClick={() => deleteNote(note.id)}
-                  className="text-red-500"
-                >
-                  削除
-                </button>
-              </>
-            )}
-          </div>
-        ))}
-      </div>
-
-      <div className="mt-6">
-        <LogoutButton />
-      </div>
+                    <button
+                      onClick={() => deleteNote(note.id)}
+                      className="text-red-500"
+                    >
+                      削除
+                    </button>
+                  </div>
+                </>
+              )}
+            </article>
+          ))
+        )}
+      </section>
     </div>
   );
 }

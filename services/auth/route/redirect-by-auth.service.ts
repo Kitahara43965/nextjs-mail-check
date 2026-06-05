@@ -3,7 +3,7 @@ import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.share
 
 export async function redirectByAuth(
   router: AppRouterInstance,
-  isVerificationMailSent: boolean,
+  isVerificationEmailSent: boolean,
 ) {
   const session = await getSession();
 
@@ -12,7 +12,7 @@ export async function redirectByAuth(
     return;
   }
 
-  if (isVerificationMailSent === true) {
+  if (isVerificationEmailSent === true) {
     router.push("/verify");
     return;
   }

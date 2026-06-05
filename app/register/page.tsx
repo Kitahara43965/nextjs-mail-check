@@ -140,7 +140,7 @@ export default function RegisterPage() {
         {/* Login Link */}
         <button
           onClick={getLogin}
-          className="w-full mt-4 text-blue-600 hover:underline text-center"
+          className="w-full mt-4 text-blue-600 hover:no-underline text-center"
         >
           ログイン
         </button>

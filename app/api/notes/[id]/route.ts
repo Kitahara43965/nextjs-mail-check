@@ -16,25 +16,25 @@ export async function PUT(
 
   const body = await req.json();
 
-  const updated = await prisma.note.updateMany({
-    where: {
-      id: params.id,
-      userId: session.user.id,
-    },
-    data: {
-      title: body.title,
-      content: body.content,
-    },
-  });
+  try {
+    const updatedNote = await prisma.note.update({
+      where: {
+        id: params.id,
+        userId: session.user.id,
+      },
+      data: {
+        title: body.title,
+        content: body.content,
+      },
+    });
 
-  if (updated.count === 0) {
+    return NextResponse.json({ note: updatedNote });
+  } catch (e) {
     return NextResponse.json(
       { error: "Note not found or forbidden" },
       { status: 404 }
     );
   }
-
-  return NextResponse.json({ ok: true });
 }
 
 /** ========= DELETE ========= */

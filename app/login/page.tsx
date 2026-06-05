@@ -48,7 +48,7 @@ export default function LoginPage() {
 
     const data = await response.json();
 
-    await redirectByAuth(router, data.isVerificationMailSent);
+    await redirectByAuth(router, data.isVerificationEmailSent);
   };
 
   const handleLogin = async () => {
@@ -155,14 +155,14 @@ export default function LoginPage() {
         {/* Links */}
         <button
           onClick={getRegister}
-          className="w-full mt-4 text-blue-600 hover:underline text-center"
+          className="w-full mt-4 text-blue-600 hover:no-underline text-center"
         >
           会員登録
         </button>
 
         <button
           onClick={getRequestPasswordReset}
-          className="w-full mt-4 text-blue-600 hover:underline text-center"
+          className="w-full mt-4 text-blue-600 hover:no-underline text-center"
         >
           パスワードリセット
         </button>

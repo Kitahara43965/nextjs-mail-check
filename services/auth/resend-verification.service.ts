@@ -4,7 +4,11 @@ import type { User, AuthToken } from "@prisma/client";
 import { issueEmailVerificationToken } from "@/services/auth/issue-email-verification-token.service";
 import { ResendVerificationError } from "@/constants/resend-verification-error.constant";
 import {ResendVerificationStatus} from "@/constants/resend-verification-status.constant";
-import {ResendVerificationKind} from "@/constants/resend-verification-kind.constant";
+import { 
+  ResendVerificationKind,
+  getAuthTokenTypeFromResendVerificationKind 
+} from "@/constants/resend-verification-kind.constant";
+import {getCanResendVerificationEmailFromStringDate} from "@/services/tool/can-resend-verification-email.service";
 import { AuthTokenType } from "@prisma/client";
 
 export async function resendVerification(
@@ -14,28 +18,19 @@ export async function resendVerification(
   const now = new Date();
   let user: User | null = null;
   let latestAuthToken: AuthToken | null = null;
-  let emailVerificationSentTimeDuration = 0;
   let canResendVerificationEmail: boolean = false;
-  let isVerificationMailSent: boolean = false;
+  let isVerificationEmailSent: boolean = false;
   let resendVerificationError: string | null = ResendVerificationError.UNDEFINED;
   let resendVerificationStatus:string|null = ResendVerificationStatus.UNDEFINED;
   let resendVerificationResult: ResendVerificationResult | null = null;
   let issueEmailVerificationTokenMarker: number = 0;
   let authTokenType:AuthTokenType = AuthTokenType.UNDEFINED;
+  let stringEmailVerifiedAt:string|null = null;
 
-  if(resendVerificationKind === ResendVerificationKind.REGISTER) {
-    authTokenType = AuthTokenType.EMAIL_VERIFICATION;
-  }else if(resendVerificationKind === ResendVerificationKind.LOGIN){
-    authTokenType = AuthTokenType.EMAIL_VERIFICATION;
-  }else if(resendVerificationKind === ResendVerificationKind.CHECK_VERIFICATION){
-    authTokenType = AuthTokenType.EMAIL_VERIFICATION;
-  }else if(resendVerificationKind === ResendVerificationKind.MAIL_RESENDING){
-    authTokenType = AuthTokenType.EMAIL_VERIFICATION;
-  }else if(resendVerificationKind === ResendVerificationKind.REQUEST_PASSWORD_RESET){
-    authTokenType = AuthTokenType.PASSWORD_RESET;
-  }else{//resendVerificationKind
-    authTokenType = AuthTokenType.UNDEFINED;
-  }//resendVerificationKind
+  authTokenType = 
+    getAuthTokenTypeFromResendVerificationKind(
+      resendVerificationKind
+    );
 
   if (userId) {
     user = await prisma.user.findUnique({
@@ -55,63 +50,49 @@ export async function resendVerification(
         orderBy: { createdAt: "desc" },
       });
 
-    if (user.emailVerifiedAt) {
-      emailVerificationSentTimeDuration =
-        now.getTime() - new Date(user.emailVerifiedAt).getTime();
-      canResendVerificationEmail =
-        emailVerificationSentTimeDuration >= 60 * 1000;
-    } else {
-      emailVerificationSentTimeDuration = 0;
-      canResendVerificationEmail = true;
-    } //user.emailVerifiedAt
+    if(user.emailVerifiedAt){
+      stringEmailVerifiedAt = user.emailVerifiedAt.toISOString();
+    }//user.emailVerifiedAt
 
+    canResendVerificationEmail = getCanResendVerificationEmailFromStringDate(stringEmailVerifiedAt);
 
     if (resendVerificationKind === ResendVerificationKind.REGISTER) {
       resendVerificationError = ResendVerificationError.UNDEFINED;
       resendVerificationStatus = ResendVerificationStatus.REGISTER;
-      isVerificationMailSent = true;
       issueEmailVerificationTokenMarker = 1;
+      isVerificationEmailSent = true;
     } else if (resendVerificationKind === ResendVerificationKind.LOGIN) {
-      if (canResendVerificationEmail === true) {
-        resendVerificationError = ResendVerificationError.UNDEFINED;
-        resendVerificationStatus = ResendVerificationStatus.LOGIN_CAN_RESEND_VERIFICATION_EMAIL;
-        isVerificationMailSent = true;
-        issueEmailVerificationTokenMarker = 2;
-      } else {
-        resendVerificationError = ResendVerificationError.UNDEFINED;
-        resendVerificationStatus = ResendVerificationStatus.LOGIN_CANNOT_RESEND_VERIFICATION_EMAIL;
-        isVerificationMailSent = false;
-        issueEmailVerificationTokenMarker = 0;
-      } //canResendVerificationEmail
+      resendVerificationError = ResendVerificationError.UNDEFINED;
+      resendVerificationStatus = ResendVerificationStatus.LOGIN_CAN_RESEND_VERIFICATION_EMAIL;
+      issueEmailVerificationTokenMarker = 2;
+      isVerificationEmailSent = canResendVerificationEmail;
     } else if (
       resendVerificationKind === ResendVerificationKind.CHECK_VERIFICATION
     ) {
-      if (canResendVerificationEmail === true) {
-        resendVerificationError = ResendVerificationError.UNDEFINED;
-        resendVerificationStatus = ResendVerificationStatus.CHECK_VERIFICATION_CAN_RESEND_VERIFICATION_EMAIL;
-        isVerificationMailSent = true;
-        issueEmailVerificationTokenMarker = 0;
-      } else {
-        resendVerificationError = ResendVerificationError.UNDEFINED;
-        resendVerificationStatus = ResendVerificationStatus.CHECK_VERIFICATION_CANNOT_RESEND_VERIFICATION_EMAIL;
-        isVerificationMailSent = false;
-        issueEmailVerificationTokenMarker = 0;
-      } //emailVerificationSentTimeDuration
+      resendVerificationError = ResendVerificationError.UNDEFINED;
+      resendVerificationStatus = ResendVerificationStatus.CHECK_VERIFICATION_CAN_RESEND_VERIFICATION_EMAIL;
+      issueEmailVerificationTokenMarker = 0;
+      isVerificationEmailSent = canResendVerificationEmail;
     }else if(resendVerificationKind === ResendVerificationKind.MAIL_RESENDING){
       resendVerificationError = ResendVerificationError.UNDEFINED;
       resendVerificationStatus = ResendVerificationStatus.MAIL_SENDING;
-      isVerificationMailSent = true;
       issueEmailVerificationTokenMarker = 3;
+      isVerificationEmailSent = true;
+    }else if(resendVerificationKind === ResendVerificationKind.DASHBOARD){
+      resendVerificationError = ResendVerificationError.UNDEFINED;
+      resendVerificationStatus = ResendVerificationStatus.DASHBOARD;
+      issueEmailVerificationTokenMarker = 0;
+      isVerificationEmailSent = canResendVerificationEmail;
     }else if(resendVerificationKind === ResendVerificationKind.REQUEST_PASSWORD_RESET){
       resendVerificationError = ResendVerificationError.UNDEFINED;
       resendVerificationStatus = ResendVerificationStatus.REQUEST_PASSWORD_RESET;
-      isVerificationMailSent = true;
       issueEmailVerificationTokenMarker = 4;
+      isVerificationEmailSent = true;
     } else {
       resendVerificationError = ResendVerificationError.UNDEFINED;
       resendVerificationStatus = ResendVerificationStatus.ELSE;
-      isVerificationMailSent = false;
       issueEmailVerificationTokenMarker = 0;
+      isVerificationEmailSent = false;
     } //resendVerificationKind
 
     if (issueEmailVerificationTokenMarker !== 0) {
@@ -126,13 +107,13 @@ export async function resendVerification(
   } else {
     resendVerificationError = ResendVerificationError.NO_USER;
     resendVerificationStatus = ResendVerificationStatus.NO_USER;
-    isVerificationMailSent = false;
+    isVerificationEmailSent = false;
   } //shouldGoVerifyUser
   
   resendVerificationResult = {
     resendVerificationError: resendVerificationError,
     resendVerificationStatus: resendVerificationStatus,
-    isVerificationMailSent: isVerificationMailSent,
+    isVerificationEmailSent: isVerificationEmailSent,
   };
 
   return resendVerificationResult;

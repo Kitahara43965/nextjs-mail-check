@@ -23,7 +23,7 @@ export default function VerifyPage() {
   const isInvalid = searchParams.get("error") === "invalid";
 
   const handleResend = async () => {
-    let isVerificationMailSent: boolean = false;
+    let isVerificationEmailSent: boolean = false;
     let formDataResendVerification: FormData | null = null;
     let resendVerificationKind: number = ResendVerificationKind.UNDEFINED;
     let resendVerificationError:string|null = ResendVerificationError.UNDEFINED;
@@ -33,13 +33,13 @@ export default function VerifyPage() {
     setLoading(true);
     setMessage(null);
 
+    resendVerificationKind = ResendVerificationKind.MAIL_RESENDING;
+    formDataResendVerification = new FormData();
+    formDataResendVerification.append(
+      "stringResendVerificationKind",
+      resendVerificationKind.toString(),
+    );
     try {
-      resendVerificationKind = ResendVerificationKind.MAIL_RESENDING;
-      formDataResendVerification = new FormData();
-      formDataResendVerification.append(
-        "stringResendVerificationKind",
-        resendVerificationKind.toString(),
-      );
 
       const res = await fetch("/api/resend-verification", {
         method: "POST",
@@ -48,7 +48,7 @@ export default function VerifyPage() {
 
       const data = await res.json();
       if (data) {
-        isVerificationMailSent = data.isVerificationMailSent;
+        isVerificationEmailSent = data.isVerificationEmailSent;
         resendVerificationError = data.resendVerificationError;
         resendVerificationStatus = data.resendVerificationStatus;
       } //data
@@ -66,49 +66,50 @@ export default function VerifyPage() {
     }
   };
 
-  useEffect(() => {
-  const interval = setInterval(async () => {
-    let isVerificationMailSent: boolean = false;
-    const formDataResendVerification = new FormData();
-
-    formDataResendVerification.append(
+  const checkVerification = async () => {
+    const formData = new FormData();
+    formData.append(
       "stringResendVerificationKind",
       ResendVerificationKind.CHECK_VERIFICATION.toString(),
     );
 
     const res = await fetch("/api/resend-verification", {
       method: "POST",
-      body: formDataResendVerification,
+      body: formData,
     });
 
-    const data = await res.json();
-
-    if (data) {
-      isVerificationMailSent = data.isVerificationMailSent;
-    }
-
-    if (isVerificationMailSent === false) {
-      clearInterval(interval);
-      router.push("/dashboard");
-    }
-  }, intervalDuration);
-
-  let timer: NodeJS.Timeout | null = null;
-
-  if (isInvalid) {
-    timer = setTimeout(() => {
-      router.replace("/verify");
-    }, intervalDuration);
-  }
-
-  return () => {
-    clearInterval(interval);
-
-    if (timer) {
-      clearTimeout(timer);
-    }
+    return res.json();
   };
-}, [isInvalid, router]);
+
+  useEffect(() => {
+  let interval: ReturnType<typeof setInterval>;
+
+    const run = async () => {
+      const data = await checkVerification();
+
+      if (data?.isVerificationEmailSent === false) {
+        router.push("/dashboard");
+        return;
+      }
+
+      interval = setInterval(async () => {
+        try {
+          const data = await checkVerification();
+
+          if (data?.isVerificationEmailSent === false) {
+            clearInterval(interval);
+            router.push("/dashboard");
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      }, intervalDuration);
+    };
+
+    run();
+
+    return () => clearInterval(interval);
+  }, [router, intervalDuration]);
 
   return (
   <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
@@ -125,7 +126,9 @@ export default function VerifyPage() {
       )}
 
       <p className="text-gray-600 mb-6">
-        登録したメールアドレスに送信されたリンクをクリックしてください。
+        ログインまたは会員登録時に認証メールを送信しています。
+        メールに記載されたリンクをクリックすると認証が完了します。
+        メールが見つからない場合は、迷惑メールフォルダもご確認ください。
       </p>
 
       {/* メッセージ表示（状態に応じて色変える） */}

@@ -1,5 +1,4 @@
 import { AuthTokenType } from "@prisma/client";
-import { ResendVerificationUserKind } from "@/constants/resend-verification-user-kind.constant";
 
 export const ResendVerificationKind = {
   UNDEFINED: 0,
@@ -7,26 +6,29 @@ export const ResendVerificationKind = {
   LOGIN: 2,
   CHECK_VERIFICATION: 3,
   MAIL_RESENDING:4,
-  REQUEST_PASSWORD_RESET:5,
+  DASHBOARD:5,
+  REQUEST_PASSWORD_RESET:6,
 } as const;
 
 
-export function getResendVerificationUserKindFromResendVerificationKind(
+export function getAuthTokenTypeFromResendVerificationKind(
   resendVerificationKind:number
-):number{
-    switch (resendVerificationKind) {
+):AuthTokenType{
+  switch (resendVerificationKind) {
       case ResendVerificationKind.REGISTER:
-        return ResendVerificationUserKind.SESSION;
+        return AuthTokenType.EMAIL_VERIFICATION;
       case ResendVerificationKind.LOGIN:
-        return ResendVerificationUserKind.SESSION;
+        return AuthTokenType.EMAIL_VERIFICATION;
       case ResendVerificationKind.CHECK_VERIFICATION:
-        return ResendVerificationUserKind.SESSION;
+        return AuthTokenType.EMAIL_VERIFICATION;
       case ResendVerificationKind.MAIL_RESENDING:
-        return ResendVerificationUserKind.SESSION;
+        return AuthTokenType.EMAIL_VERIFICATION;
+      case ResendVerificationKind.DASHBOARD:
+        return AuthTokenType.EMAIL_VERIFICATION;
       case ResendVerificationKind.REQUEST_PASSWORD_RESET:
-        return ResendVerificationUserKind.EMAIL;
+        return AuthTokenType.PASSWORD_RESET;
       default:
-        return ResendVerificationUserKind.UNDEFINED;
+        return AuthTokenType.UNDEFINED;
     }
 }//getAuthTokenTypeFromResendVerificationKind
 

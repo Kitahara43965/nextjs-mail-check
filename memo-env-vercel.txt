@@ -1,0 +1,1 @@
+NEXTAUTH_URL=https://nextjs-mail-check-jet.vercel.app

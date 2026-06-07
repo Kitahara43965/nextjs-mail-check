@@ -6,6 +6,7 @@ import { useCallback, useEffect, useState } from "react";
 import type { Note } from "@prisma/client";
 import { z } from "zod";
 import LogoutButton from "@/components/LogoutButton";
+import {getCanResendVerificationEmailFromStringDate} from "@/services/tool/can-resend-verification-email.service";
 
 /** ========= ZOD ========= */
 const noteSchema = z.object({
@@ -37,13 +38,9 @@ export default function DashboardPage() {
 
   const [createErrors, setCreateErrors] = useState<FieldErrors>({});
   const [editErrors, setEditErrors] = useState<FieldErrors>({});
+  let canResendVerificationEmail:boolean = false;
 
   /** ========= fetch notes ========= */
-  const fetchNotes = async () => {
-    const res = await fetch("/api/notes");
-    if (!res.ok) return null;
-    return res.json();
-  };
 
   useEffect(() => {
     if (status !== "authenticated") return;
@@ -149,6 +146,15 @@ export default function DashboardPage() {
   if (status === "loading" || loading) {
     return <p>読み込み中...</p>;
   }
+
+  if(session && session.user){
+    canResendVerificationEmail
+   = getCanResendVerificationEmailFromStringDate(session.user.emailVerifiedAt);
+  }//
+
+  if(canResendVerificationEmail === true){
+    return <p>認証確認中...</p>;
+  }//canResendVerificationEmail
   
   return (
     <div className="max-w-3xl mx-auto mt-10 p-6 bg-white shadow rounded-lg">

@@ -1,10 +1,10 @@
 mac版です。メール認証付アプリのβ版です。<br>
 $はターミナルに入力する内容です。<br>
 (1) git cloneします。<br>
-$ git clone git@github.com:Kitahara43965/nextjs-email-check.git<br>
+$ git clone git@github.com:Kitahara43965/nextjs-mail-check.git<br>
 <br>
-(2) nextjs-email-checkディレクトリに移動<br>
-$ cd nextjs-email-check<br>
+(2) nextjs-mail-checkディレクトリに移動<br>
+$ cd nextjs-mail-check<br>
 <br>
 (3) nextをインストールします<br>
 $ npm install<br>

@@ -23,8 +23,6 @@ export function getAuthTokenTypeFromResendVerificationKind(
         return AuthTokenType.EMAIL_VERIFICATION;
       case ResendVerificationKind.MAIL_RESENDING:
         return AuthTokenType.EMAIL_VERIFICATION;
-      case ResendVerificationKind.DASHBOARD:
-        return AuthTokenType.EMAIL_VERIFICATION;
       case ResendVerificationKind.REQUEST_PASSWORD_RESET:
         return AuthTokenType.PASSWORD_RESET;
       default:

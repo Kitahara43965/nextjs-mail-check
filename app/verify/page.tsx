@@ -7,12 +7,8 @@ import { ResendVerificationKind } from "@/constants/resend-verification-kind.con
 import { ResendVerificationError } from "@/constants/resend-verification-error.constant";
 import { ResendVerificationStatus } from "@/constants/resend-verification-status.constant";
 import { useSearchParams } from "next/navigation";
+import { getVerifyMessage } from "@/services/tool/get-verify-message.service";
 
-type Props = {
-  searchParams: {
-    error?: string;
-  };
-};
 
 export default function VerifyPage() {
   const router = useRouter();
@@ -20,10 +16,11 @@ export default function VerifyPage() {
   const [message, setMessage] = useState<string | null>(null);
   const intervalDuration = 3000;
   const searchParams = useSearchParams();
-  const isInvalid = searchParams.get("error") === "invalid";
+  const reason = searchParams.get("reason");
+  const verifyMessage = getVerifyMessage(reason);
 
   const handleResend = async () => {
-    let isVerificationEmailSent: boolean = false;
+    let shouldGoVerify: boolean = false;
     let formDataResendVerification: FormData | null = null;
     let resendVerificationKind: number = ResendVerificationKind.UNDEFINED;
     let resendVerificationError:string|null = ResendVerificationError.UNDEFINED;
@@ -48,7 +45,7 @@ export default function VerifyPage() {
 
       const data = await res.json();
       if (data) {
-        isVerificationEmailSent = data.isVerificationEmailSent;
+        shouldGoVerify = data.shouldGoVerify;
         resendVerificationError = data.resendVerificationError;
         resendVerificationStatus = data.resendVerificationStatus;
       } //data
@@ -87,8 +84,8 @@ export default function VerifyPage() {
     const run = async () => {
       const data = await checkVerification();
 
-      if (data?.isVerificationEmailSent === false) {
-        router.push("/dashboard");
+      if (data?.shouldGoVerify === false) {
+        router.replace("/dashboard");
         return;
       }
 
@@ -96,9 +93,10 @@ export default function VerifyPage() {
         try {
           const data = await checkVerification();
 
-          if (data?.isVerificationEmailSent === false) {
+          if (data?.shouldGoVerify === false) {
             clearInterval(interval);
-            router.push("/dashboard");
+            router.replace("/dashboard");
+            return;
           }
         } catch (e) {
           console.error(e);
@@ -119,19 +117,10 @@ export default function VerifyPage() {
         メール認証が必要です
       </h1>
 
-      {isInvalid && (
-        <div className="text-lg font-bold mb-4 text-red-600">
-         無効なリンクです
-        </div>
-      )}
-
       <p className="text-gray-600 mb-6">
-        ログインまたは会員登録時に認証メールを送信しています。
-        メールに記載されたリンクをクリックすると認証が完了します。
-        メールが見つからない場合は、迷惑メールフォルダもご確認ください。
+        {verifyMessage}
       </p>
 
-      {/* メッセージ表示（状態に応じて色変える） */}
       {message && (
         <p
           className={`mb-4 text-sm font-medium "text-green-600"}`}

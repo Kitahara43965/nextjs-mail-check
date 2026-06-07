@@ -1,12 +1,13 @@
 "use client";
 
+import { useSession } from "next-auth/react";
 import { signIn } from "next-auth/react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { LoginErrors } from "@/types/auth";
-import { redirectByAuth } from "@/services/auth/route/redirect-by-auth.service";
 import { ResendVerificationKind } from "@/constants/resend-verification-kind.constant";
 import { z } from "zod";
+import { useEffect } from "react";
 
 /** Zod schema */
 const loginSchema = z.object({
@@ -21,6 +22,7 @@ const loginSchema = z.object({
 });
 
 export default function LoginPage() {
+  const { data: session, status } = useSession();
   const router = useRouter();
 
   const [email, setEmail] = useState("");
@@ -31,6 +33,12 @@ export default function LoginPage() {
   const getRegister = () => router.push("/register");
   const getRequestPasswordReset = () => router.push("/request-password-reset");
 
+  useEffect(() => {
+    if (status === "authenticated") {
+      router.replace("/dashboard");
+    }
+  }, [status, router]);
+  
   const afterLoginFlow = async () => {
     const formData = new FormData();
 
@@ -48,7 +56,13 @@ export default function LoginPage() {
 
     const data = await response.json();
 
-    await redirectByAuth(router, data.isVerificationEmailSent);
+    if (data?.shouldGoVerify === true) {
+      router.push("/verify?reason=login");
+      console.log("reason=login");
+      return;
+    }
+
+    router.push("/dashboard");
   };
 
   const handleLogin = async () => {

@@ -14,6 +14,7 @@ export async function sendVerificationEmail(
   let stringSubject:string = "";
   let stringHtml:string = "";
 
+
   if (authTokenType === AuthTokenType.EMAIL_VERIFICATION) {
     stringUrl = `${baseUrl}/api/verify?token=${token}`;
 

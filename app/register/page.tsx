@@ -4,10 +4,11 @@ import { signIn } from "next-auth/react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { RegisterErrors } from "@/types/auth";
-import { redirectByAuth } from "@/services/auth/route/redirect-by-auth.service";
-import { ResendVerificationKind } from "@/constants/resend-verification-kind.constant";
+import { useSession } from "next-auth/react";
+import { useEffect } from "react";
 
 export default function RegisterPage() {
+  const { data: session, status } = useSession();
   const router = useRouter();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -15,8 +16,15 @@ export default function RegisterPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [registerErrors, setRegisterErrors] = useState<RegisterErrors>({});
   const [loading, setLoading] = useState(false);
+  const { update } = useSession();
 
   const getLogin = () => router.push("/login");
+
+  useEffect(() => {
+    if (status === "authenticated") {
+      router.replace("/dashboard");
+    }
+  }, [status, router]);
 
   const handleRegister = async () => {
     setRegisterErrors({});
@@ -45,11 +53,14 @@ export default function RegisterPage() {
       });
 
       if (registerResponse?.error) {
+        await update();
         setRegisterErrors({
           general: "自動ログインに失敗しました。手動でログインしてください",
         });
       } else {
-        await redirectByAuth(router, true);
+        router.push("/verify?reason=register");
+        return;
+
       }
     } catch {
       setRegisterErrors({ general: "サーバーエラーが発生しました" });

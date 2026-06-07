@@ -19,7 +19,7 @@ export async function resendVerification(
   let user: User | null = null;
   let latestAuthToken: AuthToken | null = null;
   let canResendVerificationEmail: boolean = false;
-  let isVerificationEmailSent: boolean = false;
+  let shouldGoVerify: boolean = false;
   let resendVerificationError: string | null = ResendVerificationError.UNDEFINED;
   let resendVerificationStatus:string|null = ResendVerificationStatus.UNDEFINED;
   let resendVerificationResult: ResendVerificationResult | null = null;
@@ -60,39 +60,34 @@ export async function resendVerification(
       resendVerificationError = ResendVerificationError.UNDEFINED;
       resendVerificationStatus = ResendVerificationStatus.REGISTER;
       issueEmailVerificationTokenMarker = 1;
-      isVerificationEmailSent = true;
+      shouldGoVerify = true;
     } else if (resendVerificationKind === ResendVerificationKind.LOGIN) {
       resendVerificationError = ResendVerificationError.UNDEFINED;
       resendVerificationStatus = ResendVerificationStatus.LOGIN_CAN_RESEND_VERIFICATION_EMAIL;
       issueEmailVerificationTokenMarker = 2;
-      isVerificationEmailSent = canResendVerificationEmail;
+      shouldGoVerify = canResendVerificationEmail;
     } else if (
       resendVerificationKind === ResendVerificationKind.CHECK_VERIFICATION
     ) {
       resendVerificationError = ResendVerificationError.UNDEFINED;
       resendVerificationStatus = ResendVerificationStatus.CHECK_VERIFICATION_CAN_RESEND_VERIFICATION_EMAIL;
       issueEmailVerificationTokenMarker = 0;
-      isVerificationEmailSent = canResendVerificationEmail;
+      shouldGoVerify = canResendVerificationEmail;
     }else if(resendVerificationKind === ResendVerificationKind.MAIL_RESENDING){
       resendVerificationError = ResendVerificationError.UNDEFINED;
-      resendVerificationStatus = ResendVerificationStatus.MAIL_SENDING;
+      resendVerificationStatus = ResendVerificationStatus.MAIL_RESENDING;
       issueEmailVerificationTokenMarker = 3;
-      isVerificationEmailSent = true;
-    }else if(resendVerificationKind === ResendVerificationKind.DASHBOARD){
-      resendVerificationError = ResendVerificationError.UNDEFINED;
-      resendVerificationStatus = ResendVerificationStatus.DASHBOARD;
-      issueEmailVerificationTokenMarker = 0;
-      isVerificationEmailSent = canResendVerificationEmail;
+      shouldGoVerify = true;
     }else if(resendVerificationKind === ResendVerificationKind.REQUEST_PASSWORD_RESET){
       resendVerificationError = ResendVerificationError.UNDEFINED;
       resendVerificationStatus = ResendVerificationStatus.REQUEST_PASSWORD_RESET;
       issueEmailVerificationTokenMarker = 4;
-      isVerificationEmailSent = true;
+      shouldGoVerify = true;
     } else {
       resendVerificationError = ResendVerificationError.UNDEFINED;
       resendVerificationStatus = ResendVerificationStatus.ELSE;
       issueEmailVerificationTokenMarker = 0;
-      isVerificationEmailSent = false;
+      shouldGoVerify = false;
     } //resendVerificationKind
 
     if (issueEmailVerificationTokenMarker !== 0) {
@@ -107,13 +102,13 @@ export async function resendVerification(
   } else {
     resendVerificationError = ResendVerificationError.NO_USER;
     resendVerificationStatus = ResendVerificationStatus.NO_USER;
-    isVerificationEmailSent = false;
+    shouldGoVerify = false;
   } //shouldGoVerifyUser
   
   resendVerificationResult = {
     resendVerificationError: resendVerificationError,
     resendVerificationStatus: resendVerificationStatus,
-    isVerificationEmailSent: isVerificationEmailSent,
+    shouldGoVerify: shouldGoVerify,
   };
 
   return resendVerificationResult;

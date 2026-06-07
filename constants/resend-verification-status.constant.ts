@@ -6,8 +6,7 @@ export const ResendVerificationStatus = {
   LOGIN_CANNOT_RESEND_VERIFICATION_EMAIL:"check-verification-cannot-resend-verification-email",
   CHECK_VERIFICATION_CAN_RESEND_VERIFICATION_EMAIL:"check-verification-can-resend-verification-email",
   CHECK_VERIFICATION_CANNOT_RESEND_VERIFICATION_EMAIL:"check-verification-cannot-resend-verification-email",
-  MAIL_SENDING:"mail-sending",
-  DASHBOARD:"dashboard",
+  MAIL_RESENDING:"mail-resending",
   REQUEST_PASSWORD_RESET:"request-password-reset",
   ELSE:"else",
 } as const;

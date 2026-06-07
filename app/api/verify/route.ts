@@ -19,14 +19,14 @@ export async function GET(req: Request) {
   });
 
   if (!authToken) {
-    return NextResponse.redirect(`${baseUrl}/verify?error=invalid`);
+    return NextResponse.redirect(`${baseUrl}/verify?reason=invalid`);
   }
 
   if (authToken.expiresAt < new Date()) {
-    return NextResponse.redirect(`${baseUrl}/verify?error=expired`);
+    return NextResponse.redirect(`${baseUrl}/verify?reason=expired`);
   }
 
-  await prisma.$transaction([
+  const result = await prisma.$transaction([
     prisma.user.update({
       where: { id: authToken.userId },
       data: {
@@ -40,6 +40,8 @@ export async function GET(req: Request) {
       },
     }),
   ]);
+
+  console.log(result);
 
   return NextResponse.redirect(`${baseUrl}/dashboard`);
 }

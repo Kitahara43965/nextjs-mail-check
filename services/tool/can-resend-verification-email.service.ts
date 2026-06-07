@@ -1,3 +1,5 @@
+import { Session } from "next-auth";
+
 export function getCanResendVerificationEmailFromStringDate(stringDate:string|null): boolean {
   let canResendVerificationEmail:boolean = false;
   const now = Date.now();
@@ -15,6 +17,17 @@ export function getCanResendVerificationEmailFromStringDate(stringDate:string|nu
   }else{
     canResendVerificationEmail = true;
   }
+
+  return canResendVerificationEmail
+}
+
+export function getCanResendVerificationEmailFromSessionForClient(session:Session|null): boolean {
+  let canResendVerificationEmail:boolean = false;
+
+  if(session && session.user){
+    canResendVerificationEmail
+    = getCanResendVerificationEmailFromStringDate(session.user.emailVerifiedAt);
+  }//session
 
   return canResendVerificationEmail
 }

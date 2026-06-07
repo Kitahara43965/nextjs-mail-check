@@ -29,7 +29,7 @@ export async function GET() {
 
   const resendVerificationResult = await resendVerification(
     userId,
-    ResendVerificationKind.DASHBOARD,
+    ResendVerificationKind.CHECK_VERIFICATION,
   );
 
   const notes = await prisma.note.findMany({
@@ -40,7 +40,7 @@ export async function GET() {
   return NextResponse.json({
     error: null,
     notes,
-    isVerificationEmailSent: resendVerificationResult?.isVerificationEmailSent ?? false,
+    shouldGoVerify: resendVerificationResult?.shouldGoVerify ?? false,
   });
 }
 

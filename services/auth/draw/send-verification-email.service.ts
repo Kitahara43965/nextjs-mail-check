@@ -71,12 +71,16 @@ export async function sendVerificationEmail(
 
   const mailProvider = getMailProvider();
 
-  if (authTokenType !== AuthTokenType.UNDEFINED) {
-    await mailProvider.send({
+  try {
+    const result = await mailProvider.send({
       to: email,
       subject: stringSubject,
       html: stringHtml,
     });
+
+    console.log("send result", result);
+  } catch (error) {
+    console.error("send error", error);
   }
 
 }

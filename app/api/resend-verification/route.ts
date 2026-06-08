@@ -9,6 +9,7 @@ import {
 import type { User, AuthToken } from "@prisma/client";
 import { AuthTokenType} from "@prisma/client";
 import { prisma } from "@/lib/prisma";
+import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   const formDataResendVerification = await req.formData();
@@ -59,5 +60,5 @@ export async function POST(req: Request) {
     resendVerificationKind,
   );
 
-  return Response.json(resendVerificationResult);
+  return NextResponse.json(resendVerificationResult);
 }

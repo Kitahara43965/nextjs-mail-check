@@ -15,22 +15,20 @@ export async function issueEmailVerificationToken(
   const token = crypto.randomBytes(32).toString("hex");
 
   if(authTokenType !== AuthTokenType.UNDEFINED){
-    await prisma.$transaction(async (tx) => {
-      await tx.authToken.deleteMany({
-        where: {
-          userId,
-          authTokenType:authTokenType,
-        },
-      });
+    await prisma.authToken.deleteMany({
+      where: {
+        userId,
+        authTokenType,
+      },
+    });
 
-      await tx.authToken.create({
-        data: {
-          userId,
-          token,
-          authTokenType:authTokenType,
-          expiresAt: new Date(Date.now() + 1000 * 60 * 60),
-        },
-      });
+    await prisma.authToken.create({
+      data: {
+        userId,
+        token,
+        authTokenType,
+        expiresAt: new Date(Date.now() + 1000 * 60 * 60),
+      },
     });
 
     await sendVerificationEmail(email, token,authTokenType);

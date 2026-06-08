@@ -10,7 +10,7 @@ $ cd nextjs-mail-check<br>
 $ npm install<br>
 <br>
 (4) mysql起動<br>
-$ brew services start mysql<br>
+$ brew services start postgresql<br>
 <br>
 (5) プロジェクト直下に.envファイルを作成します。.envファイルに下記を記載します。<br>
 DATABASE_URL="mysql://root:password@localhost:3306/auth_app"<br>

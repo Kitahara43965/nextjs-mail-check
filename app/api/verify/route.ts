@@ -7,6 +7,7 @@ export async function GET(req: Request) {
   const token = searchParams.get("token");
   const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
 
+
   if (!token) {
     return NextResponse.redirect(`${baseUrl}/verify`);
   }
@@ -26,22 +27,19 @@ export async function GET(req: Request) {
     return NextResponse.redirect(`${baseUrl}/verify?reason=expired`);
   }
 
-  const result = await prisma.$transaction([
-    prisma.user.update({
-      where: { id: authToken.userId },
-      data: {
-        emailVerifiedAt: new Date(),
-      },
-    }),
-    prisma.authToken.deleteMany({
-      where: {
-        userId: authToken.userId,
-        authTokenType: AuthTokenType.EMAIL_VERIFICATION,
-      },
-    }),
-  ]);
+  await prisma.user.update({
+    where: { id: authToken.userId },
+    data: {
+      emailVerifiedAt: new Date(),
+    },
+  });
 
-  console.log(result);
+  await prisma.authToken.deleteMany({
+    where: {
+      userId: authToken.userId,
+      authTokenType: AuthTokenType.EMAIL_VERIFICATION,
+    },
+  });
 
   return NextResponse.redirect(`${baseUrl}/dashboard`);
 }

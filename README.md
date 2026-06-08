@@ -46,10 +46,9 @@ $ npm uninstall prisma @prisma/client<br>
 $ npm install prisma@5 @prisma/client@5<br>
 <br>
 (7) データ初期化<br>
-※開発環境のみ使用（DBが初期化されます）<br>
+⚠️ migrate resetは全てのデータを削除します<br>
 $ npx prisma migrate reset<br>
 で初期化します。<br>
-⚠️ migrate resetは全てのデータを削除します<br>
 Are you sure you want to reset your database? All data will be lost.<br>
 の質問には小文字でyと入力します。<br>
 $ npx prisma db push<br>

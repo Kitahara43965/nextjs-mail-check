@@ -13,14 +13,17 @@ $ npm install<br>
 $ brew services start postgresql<br>
 <br>
 (5) プロジェクト直下に.envファイルを作成します。.envファイルに下記を記載します。<br>
-DATABASE_URL="mysql://root:password@localhost:3306/auth_app"<br>
-NEXTAUTH_SECRET="openssl rand -base64 32(⭐️)"<br>
+DATABASE_URL=<br>
+NEXTAUTH_SECRET=<br>
 NEXTAUTH_URL=http://localhost:3000<br>
 <br>
-SMTP_HOST=localhost<br>
-SMTP_PORT=1025<br>
-SMTP_USER=test@example.com<br>
-SMTP_PASS=<br>
+RESEND_API_KEY=<br>
+RESEND_FROM_EMAIL=onboarding@resend.dev<br>
+<br>
+# Mail provider selection<br>
+# Options: mailhog | resend<br>
+MAIL_PROVIDER=resend<br>
+EMAIL_RESEND_COOLDOWN_MILLISECOND=60000<br>
 <br>
 (⭐️)ここで、NEXTAUTH_SECRETの値は<br>
 $ openssl rand -base64 32<br>
@@ -49,15 +52,6 @@ $ npm install -D @types/nodemailer<br>
 $ rm -rf .next<br>
 $ npm run dev<br>
 でサーバーを立ち上げます。<br>
-<br>
-(10) mailhog起動のために別途terminalを立ち上げる<br>
-現在のプロジェクト直下(名称を変更していなければnextjs-email-auth)で<br>
-mailhogをインストールしていない場合はbrew経由でインストール<br>
-$ brew install go<br>
-$ go install github.com/mailhog/MailHog@latest<br>
-$ export PATH=$PATH:$(go env GOPATH)/bin<br>
-以下のコマンドでmailhog立ち上げ<br>
-$ mailhog<br>
 <br>
 万が一画面が固まってしまう場合、再度同じurlでページに入っていただければ、動くようになります。<br>
 <br>

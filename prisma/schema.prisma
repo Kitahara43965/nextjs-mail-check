@@ -43,9 +43,12 @@ model AuthToken {
 
 model UserSetting {
   id        String @id @default(cuid())
-  userId    String  @unique
+  userId    String @unique
   user      User @relation(fields: [userId], references: [id], onDelete: Cascade)
   hasNotifyLoginEmail Boolean @default(true)
+  // 今後ここに増やす
+  // theme String?
+  // language String?
 }
 
 model Note {

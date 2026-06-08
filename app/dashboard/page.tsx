@@ -29,13 +29,8 @@ export default function DashboardPage() {
   }, [status]);
 
   useEffect(() => {
-    console.log("reason=",reason);
     if (shouldGoVerify) {
-      if(reason){
-        router.push(`/verify?reason=${reason}`);
-      }else{
-        router.push(`/verify?reason=dashboard`);
-      }
+      router.push(`/verify?reason=dashboard`);
     }
   }, [shouldGoVerify]);
 

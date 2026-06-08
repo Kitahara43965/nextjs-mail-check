@@ -23,7 +23,10 @@ export async function GET(req: Request) {
     return NextResponse.redirect(`${baseUrl}/verify?reason=invalid`);
   }
 
-  if (authToken.expiresAt && authToken.expiresAt < new Date()) {
+  if (!authToken.expiresAt){
+    
+  console.log("OKKKKK?");
+  }else if(authToken.expiresAt < new Date()) {
     return NextResponse.redirect(`${baseUrl}/verify?reason=expired`);
   }
 

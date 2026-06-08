@@ -8,11 +8,22 @@ import { logout } from "@/lib/auth-actions";
 export default function Header() {
   const { data: session, status } = useSession();
 
+  if (status === "loading") {
+    return (
+      <header className="flex items-center justify-between px-6 py-3 border-b bg-white">
+        <Link href="/">
+          <Logo />
+        </Link>
+        <p>Loading...</p>
+      </header>
+    );
+  }
+
   const isLoggedIn = status === "authenticated";
 
-const handleLogout = async () => {
-  await logout();
-};
+  const handleLogout = async () => {
+    await logout();
+  };
 
   return (
     <header className="flex items-center justify-between px-6 py-3 border-b bg-white">

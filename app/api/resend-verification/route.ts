@@ -28,8 +28,6 @@ export async function POST(req: Request) {
   let resendVerificationKind:number = ResendVerificationKind.UNDEFINED;
   let authTokenType:AuthTokenType = AuthTokenType.UNDEFINED;
 
-  console.log("BugKiller!");
-
   if (typeof stringRawResendVerificationKind === "string") {
     stringResendVerificationKind = stringRawResendVerificationKind;
     resendVerificationKind = Number(stringResendVerificationKind);

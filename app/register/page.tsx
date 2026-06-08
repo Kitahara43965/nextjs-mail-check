@@ -58,7 +58,7 @@ export default function RegisterPage() {
           general: "自動ログインに失敗しました。手動でログインしてください",
         });
       } else {
-        router.push("/verify?reason=register");
+        router.push("/verify");
         return;
 
       }

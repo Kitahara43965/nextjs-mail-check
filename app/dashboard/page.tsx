@@ -29,8 +29,9 @@ export default function DashboardPage() {
   }, [status]);
 
   useEffect(() => {
+
     if (shouldGoVerify) {
-      router.push(`/verify?reason=dashboard`);
+      router.push(`/verify`);
     }
   }, [shouldGoVerify]);
 

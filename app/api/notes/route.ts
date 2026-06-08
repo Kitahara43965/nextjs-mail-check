@@ -6,6 +6,8 @@ import { nullable, z } from "zod";
 import { resendVerification } from "@/services/auth/resend-verification.service";
 import { ResendVerificationResult } from "@/types/resend-verification-result.type";
 import { ResendVerificationKind } from "@/constants/resend-verification-kind.constant";
+import { ResendVerificationError } from "@/constants/resend-verification-error.constant";
+import {ResendVerificationStatus} from "@/constants/resend-verification-status.constant";
 import type { User, AuthToken } from "@prisma/client";
 
 /** ========= validation ========= */
@@ -41,6 +43,12 @@ export async function GET() {
     error: null,
     notes,
     shouldGoVerify: resendVerificationResult?.shouldGoVerify ?? false,
+    resendVerificationStatus:
+      resendVerificationResult?.resendVerificationStatus
+        ??ResendVerificationStatus.UNDEFINED,
+    resendVerificationError:
+      resendVerificationResult?.resendVerificationError
+        ??ResendVerificationError.UNDEFINED,
   });
 }
 

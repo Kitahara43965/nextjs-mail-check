@@ -22,7 +22,7 @@ export async function issueEmailVerificationToken(
       },
     });
 
-    await prisma.authToken.create({
+    const result = await prisma.authToken.create({
       data: {
         userId,
         token,

@@ -57,7 +57,7 @@ export default function LoginPage() {
     const data = await response.json();
 
     if (data?.shouldGoVerify === true) {
-      router.push("/verify?reason=login");
+      router.push("/verify");
       console.log("reason=login");
       return;
     }

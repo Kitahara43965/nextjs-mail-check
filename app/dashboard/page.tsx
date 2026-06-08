@@ -4,12 +4,16 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import NoteComponent from "@/components/NoteComponent";
+import { useSearchParams } from "next/navigation";
+import { getVerifyMessage } from "@/services/tool/get-verify-message.service";
 
 /** ========= Page ========= */
 export default function DashboardPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [shouldGoVerify, setShouldGoVerify] = useState<boolean | null>(null);
+  const searchParams = useSearchParams();
+  const reason = searchParams.get("reason");
 
   useEffect(() => {
     if (status !== "authenticated") return;
@@ -25,8 +29,13 @@ export default function DashboardPage() {
   }, [status]);
 
   useEffect(() => {
+    console.log("reason=",reason);
     if (shouldGoVerify) {
-      router.push("/verify?reason=dashboard");
+      if(reason){
+        router.push(`/verify?reason=${reason}`);
+      }else{
+        router.push(`/verify?reason=dashboard`);
+      }
     }
   }, [shouldGoVerify]);
 

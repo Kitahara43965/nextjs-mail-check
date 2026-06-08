@@ -11,13 +11,23 @@ $ npm install<br>
 <br>
 (4) postgresql起動<br>
 $ brew services start postgresql<br>
+(5) (ローカルの場合のみ)postgresqlデータベース作成<br>
+$ createuser myuser -P<br>
+$ createdb myapp -O myuser <br>
+「新しいロールのためのパスワード」、「もう一度入力してください」ではパスワードは任意<br>
+myuserに権限をつける<br>
+$ psql myapp<br>
+$ GRANT ALL PRIVILEGES ON DATABASE myapp TO myuser;<br>
+$ exit<br>
 <br>
-(5) プロジェクト直下に.envファイルを作成します。.envファイルに下記を記載します。<br>
-DATABASE_URL=(⭐️)<br>
-NEXTAUTH_SECRET=(⭐️⭐️)<br>
+(6) プロジェクト直下に.envファイルを作成します。.envファイルに下記を記載します。<br>
+DATABASE_URLはlocal版に対応<br>
+<br>
+DATABASE_URL=postgresql://myuser:password@localhost:5432/myapp<br>
+NEXTAUTH_SECRET=(⭐️)<br>
 NEXTAUTH_URL=http://localhost:3000<br>
 <br>
-RESEND_API_KEY=(⭐️⭐️⭐️)<br>
+RESEND_API_KEY=(⭐️⭐️)<br>
 RESEND_FROM_EMAIL=onboarding@resend.dev<br>
 <br>
 \# Mail provider selection<br>
@@ -25,27 +35,23 @@ RESEND_FROM_EMAIL=onboarding@resend.dev<br>
 MAIL_PROVIDER=resend<br>
 EMAIL_RESEND_COOLDOWN_MILLISECOND=60000<br>
 <br>
-(⭐️)DATABASE_URLの値は<br>
-Neonのダッシュボードで選択するプロジェクトに入り、connectを選択<br>
-そこに表示されるconnecting stringの入力欄の<br>
-postgresql:xxxxxxxxxxxxxxxxxxxxx<br>
-と出ているものが値です<br>
-(⭐️⭐️)NEXTAUTH_SECRETの値は<br>
+(⭐️)NEXTAUTH_SECRETの値は<br>
 $ openssl rand -base64 32<br>
 と入力してキーの値を取得します。<br>
-NEXTAUTH_SECRET="(取得した値)"<br>
+NEXTAUTH_SECRET=取得した値<br>
 とします。<br>
-(⭐️⭐️⭐️)RESEND_API_KEYの取得<br>
-resendのダッシュボードに入り、API KEYのところに入ります。<br>
+(⭐️⭐️)RESEND_API_KEYの取得<br>
+resend::https://resend.com/emails<br>
+resendのダッシュボードに入り、API keysのところに入ります。<br>
 そこでAdd API Keyをクリックし、Nameに適切な名前を入力し、<br>
 Addを押せばキーの値を取得できます<br>
 re_xxxxxxxxxxxxxxxxxxxxx形式のものです<br>
 <br>
-(6) prismaバージョン変更(prisma ver 5)<br>
+(7) prismaバージョン変更(prisma ver 5)<br>
 $ npm uninstall prisma @prisma/client<br>
 $ npm install prisma@5 @prisma/client@5<br>
 <br>
-(7) データ初期化<br>
+(8) データ初期化<br>
 ⚠️ migrate resetは全てのデータを削除します<br>
 $ npx prisma migrate reset<br>
 で初期化します。<br>
@@ -54,18 +60,18 @@ Are you sure you want to reset your database? All data will be lost.<br>
 $ npx prisma db push<br>
 とします。<br>
 <br>
-(8) nodemailerインストール<br>
+(9) nodemailerインストール<br>
 $ npm install nodemailer<br>
 $ npm install -D @types/nodemailer<br>
 <br>
-(9) サーバー立ち上げ <br>
+(10) サーバー立ち上げ <br>
 $ rm -rf .next<br>
 $ npm run dev<br>
 でサーバーを立ち上げます。<br>
 <br>
 万が一画面が固まってしまう場合、再度同じurlでページに入っていただければ、動くようになります。<br>
 <br>
-(*) db可視化のため別途terminal立ち上げます<br>
+(11) db可視化のため別途terminal立ち上げます<br>
 現在のプロジェクト直下(名称を変更していなければnextjs-email-auth)で<br>
 $npx prisma studio<br>
 と入力すれば、dbを確認できます。<br>

@@ -8,7 +8,7 @@ import { useSession } from "next-auth/react";
 import { useEffect } from "react";
 
 export default function RegisterPage() {
-  const { data: session, status } = useSession();
+  const { data: session, status,update } = useSession();
   const router = useRouter();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -16,11 +16,12 @@ export default function RegisterPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [registerErrors, setRegisterErrors] = useState<RegisterErrors>({});
   const [loading, setLoading] = useState(false);
-  const { update } = useSession();
 
   const getLogin = () => router.push("/login");
 
   useEffect(() => {
+    if (status === "loading") return;
+
     if (status === "authenticated") {
       router.replace("/dashboard");
     }

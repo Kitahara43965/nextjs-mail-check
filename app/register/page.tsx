@@ -20,8 +20,6 @@ export default function RegisterPage() {
   const getLogin = () => router.push("/login");
 
   useEffect(() => {
-    if (status === "loading") return;
-
     if (status === "authenticated") {
       router.replace("/dashboard");
     }
@@ -69,6 +67,9 @@ export default function RegisterPage() {
       setLoading(false);
     }
   };
+
+  if (status === "loading") return;
+  if (status === "unauthenticated") router.push("/login");
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">

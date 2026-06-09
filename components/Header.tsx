@@ -3,10 +3,11 @@
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import Logo from "@/components/Logo";
-import { logout } from "@/lib/auth-actions";
+import { useRouter } from "next/navigation";
 
 export default function Header() {
-  const { data: session, status } = useSession();
+  const { status } = useSession();
+  const router = useRouter();
 
   if (status === "loading") {
     return (
@@ -22,7 +23,8 @@ export default function Header() {
   const isLoggedIn = status === "authenticated";
 
   const handleLogout = async () => {
-    await logout();
+    await signOut({ redirect: false });
+    router.replace("/login");
   };
 
   return (
@@ -36,10 +38,7 @@ export default function Header() {
           <>
             <Link href="/dashboard">ダッシュボード</Link>
 
-            <button
-              onClick={handleLogout}
-              className="text-red-500"
-            >
+            <button onClick={handleLogout} className="text-red-500">
               ログアウト
             </button>
           </>

@@ -16,6 +16,15 @@ export default function DashboardPage() {
   const reason = searchParams.get("reason");
 
   useEffect(() => {
+    if (status === "loading") return;
+
+    if (status === "unauthenticated") {
+      router.replace("/login");
+    }
+  }, [status, router]);
+
+
+  useEffect(() => {
     if (status !== "authenticated") return;
 
     const run = async () => {
@@ -36,7 +45,7 @@ export default function DashboardPage() {
   }, [shouldGoVerify]);
 
   if (status === "loading") return <p>読み込み中...</p>;
-  if (status !== "authenticated") return <p>ログインが必要です</p>;
+  if (status !== "authenticated") return null;
   if (shouldGoVerify === null) return <p>認証確認中...</p>;
   if (shouldGoVerify) return <p>認証ページへ移動中...</p>;
 

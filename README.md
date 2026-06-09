@@ -1,4 +1,4 @@
-mac版です。メール認証付アプリのβ版です。<br>
+mac版です。<br>
 $はターミナルに入力する内容です。<br>
 (1) git cloneします。<br>
 $ git clone git@github.com:Kitahara43965/nextjs-mail-check.git<br>
@@ -30,7 +30,7 @@ NEXTAUTH_URL=http://localhost:3000<br>
 RESEND_API_KEY=(⭐️⭐️)<br>
 RESEND_FROM_EMAIL=onboarding@resend.dev<br>
 <br>
-\# 本番環境ではSTMP_...はありません。<br>
+\# 本番環境ではSTMP_...はございません。<br>
 SMTP_HOST=localhost<br>
 SMTP_PORT=1025<br>
 SMTP_USER=test@example.com<br>
@@ -98,6 +98,15 @@ $npx prisma studio<br>
 <br>■ 本番環境
 <br>AWS SES / Resend 等で送信可能
 <br>環境変数で切り替え
+<br>
+(13)アーキテクチャ図<br>
+User<br>
+ ↓（HTTPS / DNS管理・セキュリティ）<br>
+Cloudflare<br>
+ ↓（SSR + API統合）<br>
+Vercel（Next.js）<br>
+ ↓（認証・業務データ）<br>
+PostgreSQL<br>
 <br>
 
 登録画面：localhost:3000/register<br>

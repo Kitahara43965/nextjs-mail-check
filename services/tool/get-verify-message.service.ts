@@ -10,6 +10,6 @@ export function getVerifyMessage(
       return "認証リンクの有効期限が切れています。認証メールを再送してください。";
 
     default:
-      return "会員登録・ログイン時にはメールをご確認ください。";
+      return "ご登録時および認証ページ表示時に、メールを送信しています。";
   }
 }

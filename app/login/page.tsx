@@ -34,12 +34,12 @@ export default function LoginPage() {
   const getRequestPasswordReset = () => router.push("/request-password-reset");
 
   useEffect(() => {
-    if (status === "loading") return;
-    
     if (status === "authenticated") {
       router.replace("/dashboard");
     }
   }, [status, router]);
+
+  
   
   const afterLoginFlow = async () => {
     const formData = new FormData();

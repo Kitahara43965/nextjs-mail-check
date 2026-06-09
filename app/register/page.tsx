@@ -20,8 +20,6 @@ export default function RegisterPage() {
   const getLogin = () => router.push("/login");
 
   useEffect(() => {
-    if (status === "loading") return;
-
     if (status === "authenticated") {
       router.replace("/dashboard");
     }

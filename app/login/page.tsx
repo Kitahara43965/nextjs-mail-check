@@ -33,6 +33,7 @@ export default function LoginPage() {
   const getRegister = () => router.push("/register");
   const getRequestPasswordReset = () => router.push("/request-password-reset");
 
+  
   useEffect(() => {
     if (status === "loading") return;
     
@@ -105,6 +106,10 @@ export default function LoginPage() {
       setLoading(false);
     }
   };
+
+  if (status === "loading") {
+    return <p>読み込み中...</p>;
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">

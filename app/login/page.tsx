@@ -33,6 +33,7 @@ export default function LoginPage() {
   const getRegister = () => router.push("/register");
   const getRequestPasswordReset = () => router.push("/request-password-reset");
 
+  
   useEffect(() => {
     if (status === "loading") return;
     
@@ -40,6 +41,11 @@ export default function LoginPage() {
       router.replace("/dashboard");
     }
   }, [status, router]);
+
+  if (status === "authenticated") {
+    return <div>something</div>;
+  };
+
   
   const afterLoginFlow = async () => {
     const formData = new FormData();

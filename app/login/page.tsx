@@ -39,7 +39,10 @@ export default function LoginPage() {
     }
   }, [status, router]);
 
-  
+  if (status === "loading") {
+    return <p>読み込み中...</p>;
+  }
+
   
   const afterLoginFlow = async () => {
     const formData = new FormData();

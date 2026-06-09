@@ -25,6 +25,10 @@ export default function RegisterPage() {
     }
   }, [status, router]);
 
+  if (status === "loading") {
+    return <p>読み込み中...</p>;
+  }
+
   const handleRegister = async () => {
     setRegisterErrors({});
     setLoading(true);

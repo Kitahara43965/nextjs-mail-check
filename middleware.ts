@@ -20,11 +20,6 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
 
-  // ② ログイン済みは login/register に行かせない
-  if (token && isAuthPage) {
-    return NextResponse.redirect(new URL("/dashboard", req.url));
-  }
-
   // ③ それ以外は通す
   return NextResponse.next();
 }

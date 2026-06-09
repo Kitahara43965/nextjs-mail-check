@@ -21,7 +21,7 @@ export default function RegisterPage() {
 
   useEffect(() => {
     if (status === "loading") return;
-    
+
     if (status === "authenticated") {
       router.replace("/dashboard");
     }

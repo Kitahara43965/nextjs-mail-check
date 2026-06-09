@@ -41,11 +41,6 @@ export default function LoginPage() {
       router.replace("/dashboard");
     }
   }, [status, router]);
-
-  if (status === "authenticated") {
-    return <div>something</div>;
-  };
-
   
   const afterLoginFlow = async () => {
     const formData = new FormData();
@@ -111,6 +106,10 @@ export default function LoginPage() {
       setLoading(false);
     }
   };
+
+  if (status === "loading") {
+    return <p>読み込み中...</p>;
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">

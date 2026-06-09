@@ -68,7 +68,9 @@ export default function RegisterPage() {
     }
   };
 
-  if (status === "loading") return;
+  if (status === "loading") {
+    return <p>読み込み中...</p>;
+  }
   if (status === "unauthenticated") router.push("/login");
 
   return (

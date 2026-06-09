@@ -30,7 +30,14 @@ NEXTAUTH_URL=http://localhost:3000<br>
 RESEND_API_KEY=(⭐️⭐️)<br>
 RESEND_FROM_EMAIL=onboarding@resend.dev<br>
 <br>
+\# 本番環境ではSTMP_...はありません。<br>
+SMTP_HOST=localhost<br>
+SMTP_PORT=1025<br>
+SMTP_USER=test@example.com<br>
+SMTP_PASS=<br>
+<br>
 \# Mail provider selection<br>
+\# mailhog/resend 本番ではresend<br>
 MAIL_PROVIDER=mailhog<br>
 EMAIL_RESEND_COOLDOWN_MILLISECOND=60000<br>
 <br>
@@ -84,6 +91,13 @@ $ npm run dev<br>
 現在のプロジェクト直下(名称を変更していなければnextjs-email-auth)で<br>
 $npx prisma studio<br>
 と入力すれば、dbを確認できます。<br>
+<br>
+<br>■ 開発環境
+<br>MailHogを使用（ローカルメール確認）
+<br>
+<br>■ 本番環境
+<br>AWS SES / Resend 等で送信可能
+<br>環境変数で切り替え
 <br>
 
 登録画面：localhost:3000/register<br>

@@ -186,6 +186,10 @@ export default function NoteComponent() {
         </button>
       </div>
 
+      <div className="border p-2 text-xs text-gray-500 rounded">
+        本サービスは継続的に改善を行っているため、仕様や機能は予告なく変更される場合があります。
+      </div>
+
       {/* ===== 一覧 ===== */}
       {loading ? (
         <p>読み込み中...</p>

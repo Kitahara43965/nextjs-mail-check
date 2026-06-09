@@ -25,7 +25,6 @@ export async function GET(req: Request) {
 
   if (!authToken.expiresAt){
     
-  console.log("OKKKKK?");
   }else if(authToken.expiresAt < new Date()) {
     return NextResponse.redirect(`${baseUrl}/verify?reason=expired`);
   }

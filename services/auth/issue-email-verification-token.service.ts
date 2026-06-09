@@ -31,8 +31,6 @@ export async function issueEmailVerificationToken(
       },
     });
 
-    console.log(result);
-
     await sendVerificationEmail(email, token,authTokenType);
 
   }//authTokenType

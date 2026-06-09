@@ -29,7 +29,7 @@ export default function RegisterPage() {
   // loading中は描画しない（チラつき防止）
   // -------------------------
   if (status === "loading") {
-    return <p>読み込み中...</p>;
+    return null;
   }
 
   const getLogin = () => router.push("/login");

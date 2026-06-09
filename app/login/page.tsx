@@ -30,7 +30,7 @@ export default function LoginPage() {
 
   // ✅ ② loading中は何も表示しない（チラつき防止）
   if (status === "loading") {
-    return <p>読み込み中...</p>;
+    return null;
   }
 
   // -------------------------

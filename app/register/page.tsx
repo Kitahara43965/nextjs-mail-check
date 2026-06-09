@@ -16,8 +16,13 @@ export default function RegisterPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [registerErrors, setRegisterErrors] = useState<RegisterErrors>({});
   const [loading, setLoading] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   const getLogin = () => router.push("/login");
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (status === "authenticated") {
@@ -68,7 +73,7 @@ export default function RegisterPage() {
     }
   };
 
-  if (status === "loading") {
+  if (!mounted) {
     return <p>読み込み中...</p>;
   }
   if (status === "unauthenticated") router.push("/login");

@@ -25,7 +25,7 @@ export default function RegisterPage() {
     if (status === "authenticated") {
       router.replace("/dashboard");
     }
-  }, [status, router]);
+  }, [status]);
 
   const handleRegister = async () => {
     setRegisterErrors({});

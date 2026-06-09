@@ -1,14 +1,15 @@
 "use client";
 
-import { signIn, useSession } from "next-auth/react";
-import { useState, useEffect } from "react";
+import { signIn } from "next-auth/react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { RegisterErrors } from "@/types/auth";
+import { useSession } from "next-auth/react";
+import { useEffect } from "react";
 
 export default function RegisterPage() {
-  const { status } = useSession();
+  const { data: session, status,update } = useSession();
   const router = useRouter();
-
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -16,27 +17,17 @@ export default function RegisterPage() {
   const [registerErrors, setRegisterErrors] = useState<RegisterErrors>({});
   const [loading, setLoading] = useState(false);
 
-  // -------------------------
-  // redirect（副作用はここだけ）
-  // -------------------------
+  const getLogin = () => router.push("/login");
+
   useEffect(() => {
+    if (status === "loading") return;
+
     if (status === "authenticated") {
       router.replace("/dashboard");
     }
   }, [status, router]);
 
-  // -------------------------
-  // loading中は描画しない（チラつき防止）
-  // -------------------------
-  if (status === "loading") {
-    return null;
-  }
-
-  const getLogin = () => router.push("/login");
-
   const handleRegister = async () => {
-    if (loading) return;
-
     setRegisterErrors({});
     setLoading(true);
 
@@ -44,40 +35,36 @@ export default function RegisterPage() {
       const response = await fetch("/api/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email,
-          password,
-          name,
-          confirmPassword,
-        }),
+        body: JSON.stringify({ email, password, name, confirmPassword }),
       });
 
       if (!response.ok) {
         const data = await response.json();
         setRegisterErrors(
-          data.registerErrors || { general: "登録に失敗しました" }
+          data.registerErrors || { general: "登録に失敗しました" },
         );
+        setLoading(false);
         return;
       }
 
-      const signInResult = await signIn("credentials", {
+      const registerResponse = await signIn("credentials", {
         email,
         password,
         redirect: false,
       });
 
-      if (signInResult?.error) {
+      if (registerResponse?.error) {
+        await update();
         setRegisterErrors({
           general: "自動ログインに失敗しました。手動でログインしてください",
         });
+      } else {
+        router.push("/verify");
         return;
-      }
 
-      router.replace("/verify");
+      }
     } catch {
-      setRegisterErrors({
-        general: "サーバーエラーが発生しました",
-      });
+      setRegisterErrors({ general: "サーバーエラーが発生しました" });
     } finally {
       setLoading(false);
     }
@@ -86,67 +73,86 @@ export default function RegisterPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
       <div className="w-full max-w-md bg-white shadow-lg rounded-lg p-8">
-        <h1 className="text-2xl font-bold text-center mb-6">
-          会員登録
-        </h1>
+        <h1 className="text-2xl font-bold text-center mb-6">会員登録</h1>
 
         {/* Name */}
-        <input
-          className="w-full px-4 py-2 border rounded-md mb-4"
-          placeholder="ユーザー名"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-        {registerErrors.name && <p>{registerErrors.name}</p>}
+        <div className="mb-4">
+          <input
+            className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            placeholder="ユーザー名"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+          {registerErrors.name && (
+            <p className="text-red-500 text-sm mt-1">{registerErrors.name}</p>
+          )}
+        </div>
 
         {/* Email */}
-        <input
-          className="w-full px-4 py-2 border rounded-md mb-4"
-          placeholder="メールアドレス"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        {registerErrors.email && <p>{registerErrors.email}</p>}
+        <div className="mb-4">
+          <input
+            className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            placeholder="メールアドレス"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          {registerErrors.email && (
+            <p className="text-red-500 text-sm mt-1">{registerErrors.email}</p>
+          )}
+        </div>
 
         {/* Password */}
-        <input
-          type="password"
-          className="w-full px-4 py-2 border rounded-md mb-4"
-          placeholder="パスワード"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        {registerErrors.password && <p>{registerErrors.password}</p>}
+        <div className="mb-4">
+          <input
+            type="password"
+            className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            placeholder="パスワード"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          {registerErrors.password && (
+            <p className="text-red-500 text-sm mt-1">
+              {registerErrors.password}
+            </p>
+          )}
+        </div>
 
-        {/* Confirm */}
-        <input
-          type="password"
-          className="w-full px-4 py-2 border rounded-md mb-4"
-          placeholder="パスワード(確認用)"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-        />
-        {registerErrors.confirmPassword && (
-          <p>{registerErrors.confirmPassword}</p>
-        )}
+        {/* Confirm Password */}
+        <div className="mb-4">
+          <input
+            type="password"
+            className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            placeholder="パスワード(確認用)"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+          />
+          {registerErrors.confirmPassword && (
+            <p className="text-red-500 text-sm mt-1">
+              {registerErrors.confirmPassword}
+            </p>
+          )}
+        </div>
 
+        {/* General Error */}
         {registerErrors.general && (
-          <p className="text-red-600 mb-4">
+          <p className="text-red-600 text-center mb-4">
             {registerErrors.general}
           </p>
         )}
 
+        {/* Register Button */}
         <button
           onClick={handleRegister}
           disabled={loading}
-          className="w-full bg-blue-600 text-white py-2 rounded-md"
+          className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition disabled:bg-gray-400"
         >
           {loading ? "登録中..." : "会員登録"}
         </button>
 
+        {/* Login Link */}
         <button
           onClick={getLogin}
-          className="w-full mt-4 text-blue-600"
+          className="w-full mt-4 text-blue-600 hover:no-underline text-center"
         >
           ログイン
         </button>

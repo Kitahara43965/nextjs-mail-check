@@ -31,8 +31,7 @@ RESEND_API_KEY=(⭐️⭐️)<br>
 RESEND_FROM_EMAIL=onboarding@resend.dev<br>
 <br>
 \# Mail provider selection<br>
-\# Options: mailhog | resend<br>
-MAIL_PROVIDER=resend<br>
+MAIL_PROVIDER=mailhog<br>
 EMAIL_RESEND_COOLDOWN_MILLISECOND=60000<br>
 <br>
 (⭐️)NEXTAUTH_SECRETの値は<br>
@@ -64,18 +63,29 @@ $ npx prisma db push<br>
 $ npm install nodemailer<br>
 $ npm install -D @types/nodemailer<br>
 <br>
-(10) サーバー立ち上げ <br>
+(10) mailhog起動のために別途terminalを立ち上げます<br>
+この項目は.env
+現在のプロジェクト直下(名称を変更していなければnextjs-email-auth)で<br>
+mailhogをインストールしていない場合はbrew経由でインストール<br>
+$ brew install go<br>
+$ go install github.com/mailhog/MailHog@latest<br>
+$ export PATH=$PATH:$(go env GOPATH)/bin<br>
+以下のコマンドでmailhog立ち上げ<br>
+$ mailhog<br>
+<br>
+(11) サーバー立ち上げ <br>
 $ rm -rf .next<br>
 $ npm run dev<br>
 でサーバーを立ち上げます。<br>
 <br>
 万が一画面が固まってしまう場合、再度同じurlでページに入っていただければ、動くようになります。<br>
 <br>
-(11) db可視化のため別途terminal立ち上げます<br>
+(12) db可視化のため別途terminal立ち上げます<br>
 現在のプロジェクト直下(名称を変更していなければnextjs-email-auth)で<br>
 $npx prisma studio<br>
 と入力すれば、dbを確認できます。<br>
 <br>
+
 登録画面：localhost:3000/register<br>
 ログイン画面： localhost:3000/login<br>
 ダッシュボード画面：localhost:3000/dashboard<br>

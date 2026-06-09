@@ -16,15 +16,12 @@ export default function RegisterPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [registerErrors, setRegisterErrors] = useState<RegisterErrors>({});
   const [loading, setLoading] = useState(false);
-  const [mounted, setMounted] = useState(false);
 
   const getLogin = () => router.push("/login");
 
   useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  useEffect(() => {
+    if (status === "loading") return;
+    
     if (status === "authenticated") {
       router.replace("/dashboard");
     }
@@ -72,11 +69,6 @@ export default function RegisterPage() {
       setLoading(false);
     }
   };
-
-  if (!mounted) {
-    return <p>読み込み中...</p>;
-  }
-  if (status === "unauthenticated") router.push("/login");
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">

@@ -20,7 +20,9 @@ $ psql myapp<br>
 $ GRANT ALL PRIVILEGES ON DATABASE myapp TO myuser;<br>
 $ exit<br>
 <br>
-(6) プロジェクト直下に.envファイルを作成します。.envファイルに下記を記載します。<br>
+(6) プロジェクト直下に<br>
+$cp .env.example .env<br>
+と入力し、.envファイルを作成します。.envファイルに下記を記載します。<br>
 DATABASE_URLはlocal版に対応<br>
 <br>
 DATABASE_URL=postgresql://myuser:password@localhost:5432/myapp<br>

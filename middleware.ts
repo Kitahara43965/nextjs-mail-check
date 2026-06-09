@@ -10,9 +10,6 @@ export async function middleware(req: NextRequest) {
 
   const { pathname } = req.nextUrl;
 
-  const isAuthPage =
-    pathname === "/login" || pathname === "/register";
-
   const isDashboard = pathname.startsWith("/dashboard");
 
   // ① 未ログインはログインへ（これだけmiddlewareでやる）

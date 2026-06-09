@@ -188,6 +188,7 @@ export default function NoteComponent() {
 
       <div className="border p-2 text-xs text-gray-500 rounded">
         本サービスは継続的に改善を行っているため、仕様や機能は予告なく変更される場合があります。
+        パスワード・個人情報などの機密性の高い情報の入力や保存はお控えください。
       </div>
 
       {/* ===== 一覧 ===== */}

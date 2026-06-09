@@ -15,7 +15,7 @@ export default function Header() {
         <Link href="/">
           <Logo />
         </Link>
-        <p>Loading...</p>
+        <p>準備中...</p>
       </header>
     );
   }

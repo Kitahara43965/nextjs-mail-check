@@ -9,7 +9,7 @@ export async function middleware(req: NextRequest) {
 
   if (!isProtected) return NextResponse.next();
 
-  // ここで強い判定しない（重要）
+  // ここで強い判定しない
   const token = await getToken({
     req,
     secret: process.env.NEXTAUTH_SECRET,

@@ -1,3 +1,5 @@
+## 認証フローと権限制御を持つダッシュボードアプリ（Next.js + NextAuth）
+# mailhogアプリの構築
 mac版です。<br>
 $はターミナルに入力する内容です。<br>
 (1) git cloneします。<br>
@@ -101,8 +103,6 @@ $ export PATH=$PATH:$(go env GOPATH)/bin<br>
 以下のコマンドでmailhog立ち上げ<br>
 $ mailhog<br>
 <br>
-万が一画面が固まってしまう場合、再度同じurlでページに入っていただければ、動くようになります。<br>
-<br>
 (12) db可視化のため別途terminal立ち上げます<br>
 現在のプロジェクト直下(名称を変更していなければnextjs-mail-check)で<br>
 $npx prisma studio<br>
@@ -115,16 +115,27 @@ $npx prisma studio<br>
 <br>Resendで送信可能
 <br>環境変数で切り替え
 <br>
-#ER図<br>
+
+# 技術スタック
+Next.js（App Router）
+React
+TypeScript
+NextAuth.js
+Zod
+Fetch API
+
+# ER図
 <img width="641" height="391" alt="Image" src="https://github.com/user-attachments/assets/98810bf1-4698-458c-80a2-114cb92f6b3e" />
 <br>
-#画面<br>
+
+# 画面
 登録画面：localhost:3000/register<br>
 ログイン画面： localhost:3000/login<br>
 ダッシュボード画面：localhost:3000/dashboard<br>
 mailhogメール受信画面: localhost:8025<br>
 prisma studio(DB確認): http://localhost:5555<br>
-#アーキテクチャ図<br>
+
+# アーキテクチャ図
 User<br>
  ↓（HTTPS / DNS管理・セキュリティ）<br>
 Cloudflare<br>
@@ -133,3 +144,4 @@ Vercel（Next.js）<br>
  ↓（認証・業務データ）<br>
 PostgreSQL<br>
 <br>
+万が一画面が固まってしまう場合、再度同じurlでページに入っていただければ、動くようになります。<br>

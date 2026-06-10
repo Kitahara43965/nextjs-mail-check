@@ -69,7 +69,13 @@ export default function LoginPage() {
         redirect: false,
       });
 
-      if (signInResult?.error) return;
+      if (signInResult?.error) {
+        setLoginErrors({
+          general: "メールアドレスまたはパスワードが間違っています",
+        });
+
+        return;
+      }
 
 
       const res = await fetch("/api/resend-verification", {

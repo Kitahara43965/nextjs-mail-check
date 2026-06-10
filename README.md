@@ -107,7 +107,6 @@ $ mailhog<br>
 現在のプロジェクト直下(名称を変更していなければnextjs-mail-check)で<br>
 $npx prisma studio<br>
 と入力すれば、dbを確認できます。<br>
-<br>
 <br>■ 開発環境
 <br>MailHogを使用（ローカルメール確認）
 <br>

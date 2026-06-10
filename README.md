@@ -11,6 +11,7 @@ $ npm install<br>
 <br>
 (4) postgresql起動<br>
 $ brew services start postgresql<br>
+<br>
 (5) (ローカルの場合のみ)postgresqlデータベース作成<br>
 ここでは PostgreSQL のユーザー名を memouser、データベース名を memoapp としています。<br>
 ユーザーとベータベースが存在するか確認します。<br>
@@ -22,10 +23,10 @@ $ \l<br>
 $ exit<br>
 です。<br>
 nextjs-mail-checkディレクトリに移動します<br>
-「名前」にmemoappがなければ<br>
-$ createdb memoapp -O memouser <br>
 「所有者」にmemouserがなければ<br>
 $ createuser memouser -P<br>
+「名前」にmemoappがなければ<br>
+$ createdb memoapp -O memouser <br>
 「新しいロールのためのパスワード」、「もう一度入力してください」では任意の同じ1文字以上の半角英語パスワードを入力します<br>
 memouserに権限をつけます。<br>
 $ psql memoapp<br>

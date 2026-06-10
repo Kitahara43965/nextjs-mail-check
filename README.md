@@ -117,12 +117,25 @@ $npx prisma studio<br>
 <br>
 
 # 技術スタック
+フロントエンド<br>
 Next.js（App Router）<br>
 React<br>
 TypeScript<br>
-NextAuth.js<br>
-Zod<br>
 Fetch API<br>
+<br>
+バックエンド<br>
+Next.js API Routes<br>
+NextAuth.js（認証）<br>
+<br>
+データベース<br>
+PostgreSQL 18<br>
+Prisma 5（ORM）<br>
+<br>
+バリデーション<br>
+Zod<br>
+インフラ・ホスティング<br>
+Vercel<br>
+<br>
 
 # ER図
 <img width="641" height="391" alt="Image" src="https://github.com/user-attachments/assets/98810bf1-4698-458c-80a2-114cb92f6b3e" />

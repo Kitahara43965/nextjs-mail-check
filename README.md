@@ -115,7 +115,16 @@ $npx prisma studio<br>
 <br>Resendで送信可能
 <br>環境変数で切り替え
 <br>
-(13)アーキテクチャ図<br>
+#ER図<br>
+<img width="641" height="391" alt="Image" src="https://github.com/user-attachments/assets/98810bf1-4698-458c-80a2-114cb92f6b3e" />
+<br>
+#画面<br>
+登録画面：localhost:3000/register<br>
+ログイン画面： localhost:3000/login<br>
+ダッシュボード画面：localhost:3000/dashboard<br>
+mailhogメール受信画面: localhost:8025<br>
+prisma studio(DB確認): http://localhost:5555<br>
+#アーキテクチャ図<br>
 User<br>
  ↓（HTTPS / DNS管理・セキュリティ）<br>
 Cloudflare<br>
@@ -124,9 +133,3 @@ Vercel（Next.js）<br>
  ↓（認証・業務データ）<br>
 PostgreSQL<br>
 <br>
-
-登録画面：localhost:3000/register<br>
-ログイン画面： localhost:3000/login<br>
-ダッシュボード画面：localhost:3000/dashboard<br>
-mailhogメール受信画面: localhost:8025<br>
-prisma studio(DB確認): http://localhost:5555<br>

@@ -43,33 +43,6 @@ export default function LoginPage() {
     return <p>読み込み中...</p>;
   }
 
-  
-  const afterLoginFlow = async () => {
-    const formData = new FormData();
-
-    formData.append(
-      "stringResendVerificationKind",
-      ResendVerificationKind.LOGIN.toString()
-    );
-
-    formData.append("email", email);
-
-    const response = await fetch("/api/resend-verification", {
-      method: "POST",
-      body: formData,
-    });
-
-    const data = await response.json();
-
-    if (data?.shouldGoVerify === true) {
-      router.push("/verify");
-      console.log("reason=login");
-      return;
-    }
-
-    router.push("/dashboard");
-  };
-
   const handleLogin = async () => {
     if (loading) return;
     setLoading(true);
@@ -103,7 +76,7 @@ export default function LoginPage() {
         return;
       }
 
-      await afterLoginFlow();
+      router.push("/post-login");
     } finally {
       setLoading(false);
     }

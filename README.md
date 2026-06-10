@@ -93,7 +93,7 @@ $ npm run dev<br>
 <br>
 (11) mailhog起動のために別途terminalを立ち上げます<br>
 この項目は.env
-現在のプロジェクト直下(名称を変更していなければnextjs-email-auth)で<br>
+現在のプロジェクト直下(名称を変更していなければnextjs-mail-check)で<br>
 mailhogをインストールしていない場合はbrew経由でインストール<br>
 $ brew install go<br>
 $ go install github.com/mailhog/MailHog@latest<br>
@@ -104,7 +104,7 @@ $ mailhog<br>
 万が一画面が固まってしまう場合、再度同じurlでページに入っていただければ、動くようになります。<br>
 <br>
 (12) db可視化のため別途terminal立ち上げます<br>
-現在のプロジェクト直下(名称を変更していなければnextjs-email-auth)で<br>
+現在のプロジェクト直下(名称を変更していなければnextjs-mail-check)で<br>
 $npx prisma studio<br>
 と入力すれば、dbを確認できます。<br>
 <br>

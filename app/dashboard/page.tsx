@@ -20,32 +20,26 @@ export default function DashboardPage() {
 
     if (status === "unauthenticated") {
       router.replace("/login");
+      return;
+    }
+
+    if (status === "authenticated") {
+      const run = async () => {
+        const res = await fetch("/api/notes");
+        const data = await res.json();
+
+        if (data?.shouldGoVerify) {
+          router.replace("/verify");
+        } else {
+          setShouldGoVerify(false);
+        }
+      };
+
+      run();
     }
   }, [status, router]);
 
-
-  useEffect(() => {
-    if (status !== "authenticated") return;
-
-    const run = async () => {
-      const res = await fetch("/api/notes");
-      const data = await res.json();
-
-      setShouldGoVerify(data?.shouldGoVerify ?? false);
-    };
-
-    run();
-  }, [status]);
-
-  useEffect(() => {
-
-    if (shouldGoVerify) {
-      router.push(`/verify`);
-    }
-  }, [shouldGoVerify]);
-
   if (status === "loading") return <p>読み込み中...</p>;
-  if (status !== "authenticated") return null;
   if (shouldGoVerify === null) return <p>認証確認中...</p>;
   if (shouldGoVerify) return <p>認証ページへ移動中...</p>;
 

@@ -98,7 +98,7 @@ $npx prisma studio<br>
 <br>MailHogを使用（ローカルメール確認）
 <br>
 <br>■ 本番環境
-<br>AWS SES / Resend 等で送信可能
+<br>Resendで送信可能
 <br>環境変数で切り替え
 <br>
 (13)アーキテクチャ図<br>

@@ -3,16 +3,19 @@ import type { NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
 
 export async function middleware(req: NextRequest) {
+  const { pathname } = req.nextUrl;
+
+  const isProtected = pathname.startsWith("/dashboard");
+
+  if (!isProtected) return NextResponse.next();
+
+  // ここで強い判定しない（重要）
   const token = await getToken({
     req,
     secret: process.env.NEXTAUTH_SECRET,
   });
 
-  const { pathname } = req.nextUrl;
-
-  const isProtected = pathname.startsWith("/dashboard");
-
-  if (isProtected && !token) {
+  if (!token) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
 

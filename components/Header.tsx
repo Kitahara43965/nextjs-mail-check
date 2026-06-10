@@ -6,7 +6,7 @@ import Logo from "@/components/Logo";
 import { useRouter } from "next/navigation";
 
 export default function Header() {
-  const { status } = useSession();
+  const { data: session, status } = useSession();
   const router = useRouter();
 
   if (status === "loading") {

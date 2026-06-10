@@ -12,12 +12,24 @@ $ npm install<br>
 (4) postgresql起動<br>
 $ brew services start postgresql<br>
 (5) (ローカルの場合のみ)postgresqlデータベース作成<br>
-$ createuser myuser -P<br>
-$ createdb myapp -O myuser <br>
-「新しいロールのためのパスワード」、「もう一度入力してください」ではパスワードは任意<br>
-myuserに権限をつける<br>
-$ psql myapp<br>
-$ GRANT ALL PRIVILEGES ON DATABASE myapp TO myuser;<br>
+ここでは PostgreSQL のユーザー名を memouser、データベース名を memoapp としています。<br>
+ユーザーとベータベースが存在するか確認します。<br>
+$ psql postgres<br>
+で入れれば<br>
+$ \l<br>
+でデータベース一覧を確認できます。<br>
+外に出るコマンドは<br>
+$ exit<br>
+です。<br>
+nextjs-mail-checkディレクトリに移動します<br>
+「名前」にmemoappがなければ<br>
+$ createdb memoapp -O memouser <br>
+「所有者」にmemouserがなければ<br>
+$ createuser memouser -P<br>
+「新しいロールのためのパスワード」、「もう一度入力してください」では任意の同じ1文字以上の半角英語パスワードを入力します<br>
+memouserに権限をつけます。<br>
+$ psql memoapp<br>
+$ GRANT ALL PRIVILEGES ON DATABASE memoapp TO memouser;<br>
 $ exit<br>
 <br>
 (6) プロジェクト直下に<br>
@@ -25,7 +37,7 @@ $cp .env.example .env<br>
 と入力し、.envファイルを作成します。.envファイルに下記を記載します。<br>
 DATABASE_URLはlocal版に対応<br>
 <br>
-DATABASE_URL=postgresql://myuser:password@localhost:5432/myapp<br>
+DATABASE_URL=postgresql://memouser:password@localhost:5432/memoapp<br>
 NEXTAUTH_SECRET=(⭐️)<br>
 NEXTAUTH_URL=http://localhost:3000<br>
 <br>
@@ -54,6 +66,7 @@ resendのダッシュボードに入り、API keysのところに入ります。
 そこでAdd API Keyをクリックし、Nameに適切な名前を入力し、<br>
 Addを押せばキーの値を取得できます<br>
 re_xxxxxxxxxxxxxxxxxxxxx形式のものです<br>
+addボタンを押すとキーを取得できなくなります。<br>
 <br>
 (7) prismaバージョン変更(prisma ver 5)<br>
 $ npm uninstall prisma @prisma/client<br>
@@ -72,7 +85,12 @@ $ npx prisma db push<br>
 $ npm install nodemailer<br>
 $ npm install -D @types/nodemailer<br>
 <br>
-(10) mailhog起動のために別途terminalを立ち上げます<br>
+(10) サーバー立ち上げ <br>
+$ rm -rf .next<br>
+$ npm run dev<br>
+でサーバーを立ち上げます。<br>
+<br>
+(11) mailhog起動のために別途terminalを立ち上げます<br>
 この項目は.env
 現在のプロジェクト直下(名称を変更していなければnextjs-email-auth)で<br>
 mailhogをインストールしていない場合はbrew経由でインストール<br>
@@ -81,11 +99,6 @@ $ go install github.com/mailhog/MailHog@latest<br>
 $ export PATH=$PATH:$(go env GOPATH)/bin<br>
 以下のコマンドでmailhog立ち上げ<br>
 $ mailhog<br>
-<br>
-(11) サーバー立ち上げ <br>
-$ rm -rf .next<br>
-$ npm run dev<br>
-でサーバーを立ち上げます。<br>
 <br>
 万が一画面が固まってしまう場合、再度同じurlでページに入っていただければ、動くようになります。<br>
 <br>

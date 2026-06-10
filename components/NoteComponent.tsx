@@ -131,13 +131,6 @@ export default function NoteComponent() {
 
     setEditErrors({});
 
-    // 🚀 先にUI更新（楽観）
-    setNotes((prev) =>
-      prev.map((n) =>
-        n.id === editingId ? { ...n, ...result.data } : n
-      )
-    );
-
     setEditingId(null);
 
     const res = await fetch(`/api/notes/${editingId}`, {
@@ -145,6 +138,14 @@ export default function NoteComponent() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(result.data),
     });
+
+    const data = await res.json();
+
+    setNotes((prev) =>
+      prev.map((n) =>
+        n.id === editingId ? data.note : n
+      )
+    );
 
     if (!res.ok) {
       console.error(await res.json());

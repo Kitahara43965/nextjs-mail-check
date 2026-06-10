@@ -21,7 +21,6 @@ export default function VerifyPage() {
 
   const handleResend = async () => {
     let shouldGoVerify: boolean = false;
-    let formDataResendVerification: FormData | null = null;
     let resendVerificationKind: number = ResendVerificationKind.UNDEFINED;
     let resendVerificationError:string|null = ResendVerificationError.UNDEFINED;
     let resendVerificationStatus:string|null = ResendVerificationStatus.UNDEFINED;
@@ -31,16 +30,17 @@ export default function VerifyPage() {
     setMessage(null);
 
     resendVerificationKind = ResendVerificationKind.MAIL_RESENDING;
-    formDataResendVerification = new FormData();
-    formDataResendVerification.append(
-      "stringResendVerificationKind",
-      resendVerificationKind.toString(),
-    );
-    try {
 
+    try {
       const res = await fetch("/api/resend-verification", {
         method: "POST",
-        body: formDataResendVerification,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          resendVerificationKind: resendVerificationKind,
+          email:null,
+        }),
       });
 
       const data = await res.json();
@@ -64,15 +64,16 @@ export default function VerifyPage() {
   };
 
   const checkVerification = async () => {
-    const formData = new FormData();
-    formData.append(
-      "stringResendVerificationKind",
-      ResendVerificationKind.CHECK_VERIFICATION.toString(),
-    );
 
     const res = await fetch("/api/resend-verification", {
       method: "POST",
-      body: formData,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        resendVerificationKind: ResendVerificationKind.CHECK_VERIFICATION,
+        email:null,
+      }),
     });
 
     return res.json();

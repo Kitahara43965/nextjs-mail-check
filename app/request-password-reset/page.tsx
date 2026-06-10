@@ -34,18 +34,16 @@ export default function RequestPasswordResetPage() {
     setIsLoading(true);
 
     try {
-      const formData = new FormData();
-
-      formData.append(
-        "stringResendVerificationKind",
-        ResendVerificationKind.REQUEST_PASSWORD_RESET.toString()
-      );
-
-      formData.append("email", email);
 
       const res = await fetch("/api/resend-verification", {
         method: "POST",
-        body: formData,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          resendVerificationKind: ResendVerificationKind.REQUEST_PASSWORD_RESET,
+          email:email,
+        }),
       });
 
       const data = await res.json();

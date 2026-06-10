@@ -202,6 +202,7 @@ export default function NoteComponent() {
             <li key={note.id} className="border p-2 rounded">
               {editingId === note.id ? (
                 <div className="space-y-2">
+                  
                   {/* タイトル */}
                   <input
                     value={editTitle}
@@ -243,6 +244,7 @@ export default function NoteComponent() {
                 </div>
               ) : (
                 <>
+                  
                   <p className="font-bold">{note.title}</p>
                   <p className="text-sm text-gray-600">{note.content}</p>
 
@@ -261,6 +263,17 @@ export default function NoteComponent() {
                   </button>
                 </>
               )}
+              {/* 日時 */}
+              <div className="mt-1.5 text-xs text-gray-500">
+                <p>
+                  作成日：
+                  {new Date(note.createdAt).toLocaleString("ja-JP")}
+                </p>
+                <p>
+                  更新日：
+                  {new Date(note.updatedAt).toLocaleString("ja-JP")}
+                </p>
+              </div>
             </li>
           ))}
         </ul>

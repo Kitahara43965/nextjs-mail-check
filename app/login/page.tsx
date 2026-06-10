@@ -69,14 +69,27 @@ export default function LoginPage() {
         redirect: false,
       });
 
-      if (signInResult?.error) {
-        setLoginErrors({
-          general: "メールアドレスまたはパスワードが間違っています",
-        });
-        return;
-      }
+      if (signInResult?.error) return;
 
-      router.push("/post-login");
+
+      const res = await fetch("/api/resend-verification", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          resendVerificationKind: ResendVerificationKind.LOGIN,
+          email:null,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (data?.shouldGoVerify) {
+        router.replace("/verify");
+      } else {
+        router.replace("/dashboard");
+      }
     } finally {
       setLoading(false);
     }

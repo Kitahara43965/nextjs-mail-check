@@ -16,6 +16,7 @@ export async function middleware(req: NextRequest) {
   });
 
   if (!token) {
+    console.log("death to bug squirrel![login]");
     return NextResponse.redirect(new URL("/login", req.url));
   }
 

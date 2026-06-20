@@ -4,10 +4,9 @@ export const ResendVerificationKind = {
   UNDEFINED: 0,
   REGISTER: 1,
   LOGIN: 2,
-  CHECK_VERIFICATION: 3,
-  MAIL_RESENDING:4,
-  DASHBOARD:5,
-  REQUEST_PASSWORD_RESET:6,
+  MAIL_RESENDING:3,
+  DASHBOARD:4,
+  REQUEST_PASSWORD_RESET:5,
 } as const;
 
 
@@ -18,8 +17,6 @@ export function getAuthTokenTypeFromResendVerificationKind(
       case ResendVerificationKind.REGISTER:
         return AuthTokenType.EMAIL_VERIFICATION;
       case ResendVerificationKind.LOGIN:
-        return AuthTokenType.EMAIL_VERIFICATION;
-      case ResendVerificationKind.CHECK_VERIFICATION:
         return AuthTokenType.EMAIL_VERIFICATION;
       case ResendVerificationKind.MAIL_RESENDING:
         return AuthTokenType.EMAIL_VERIFICATION;

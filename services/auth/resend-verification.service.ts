@@ -8,7 +8,8 @@ import {
   ResendVerificationKind,
   getAuthTokenTypeFromResendVerificationKind 
 } from "@/constants/resend-verification-kind.constant";
-import {getCanResendVerificationEmailFromStringDate} from "@/services/tool/can-resend-verification-email.service";
+import {getCanResendVerificationEmailFromStringDate}
+ from "@/services/tool/can-resend-verification-email.service";
 import { AuthTokenType } from "@prisma/client";
 
 export async function resendVerification(
@@ -65,13 +66,6 @@ export async function resendVerification(
       resendVerificationError = ResendVerificationError.UNDEFINED;
       resendVerificationStatus = ResendVerificationStatus.LOGIN_CAN_RESEND_VERIFICATION_EMAIL;
       issueEmailVerificationTokenMarker = 2;
-      shouldGoVerify = canResendVerificationEmail;
-    } else if (
-      resendVerificationKind === ResendVerificationKind.CHECK_VERIFICATION
-    ) {
-      resendVerificationError = ResendVerificationError.UNDEFINED;
-      resendVerificationStatus = ResendVerificationStatus.CHECK_VERIFICATION_CAN_RESEND_VERIFICATION_EMAIL;
-      issueEmailVerificationTokenMarker = 0;
       shouldGoVerify = canResendVerificationEmail;
     }else if(resendVerificationKind === ResendVerificationKind.MAIL_RESENDING){
       resendVerificationError = ResendVerificationError.UNDEFINED;

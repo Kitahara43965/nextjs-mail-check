@@ -2,7 +2,6 @@ import { prisma } from "@/lib/prisma";
 import { hashPassword } from "@/lib/crypto";
 import { RegisterErrors } from "@/types/auth";
 import { resendVerification } from "@/services/auth/resend-verification.service";
-import { ResendVerificationResult } from "@/types/resend-verification-result.type";
 import { ResendVerificationKind } from "@/constants/resend-verification-kind.constant";
 
 import { z } from "zod";
@@ -21,7 +20,6 @@ export async function POST(req: Request) {
   const body = await req.json();
 
   const parsed = registerSchema.safeParse(body);
-  let resendVerificationResult:ResendVerificationResult|null = null;
 
   if (!parsed.success) {
     const errors = parsed.error.flatten().fieldErrors;
@@ -78,7 +76,7 @@ export async function POST(req: Request) {
     },
   });
 
-  resendVerificationResult = await resendVerification(
+  await resendVerification(
     user.id,
     ResendVerificationKind.REGISTER,
   );

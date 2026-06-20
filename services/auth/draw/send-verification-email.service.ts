@@ -1,8 +1,6 @@
-import { resend } from "@/lib/resend";
-import { transporter } from "@/lib/mail";
-import { AuthTokenType } from "@prisma/client";
-import { getMailProvider } from "@/lib/mail/get-mail-provider";
 
+import { AuthTokenType } from "@prisma/client";
+import {sendEmail} from "@/lib/email/send-email";
 
 export async function sendVerificationEmail(
   email: string,
@@ -13,7 +11,6 @@ export async function sendVerificationEmail(
   let stringUrl:string = "";
   let stringSubject:string = "";
   let stringHtml:string = "";
-
 
   if (authTokenType === AuthTokenType.EMAIL_VERIFICATION) {
     stringUrl = `${baseUrl}/api/verify?token=${token}`;
@@ -44,9 +41,7 @@ export async function sendVerificationEmail(
 
   if (authTokenType === AuthTokenType.PASSWORD_RESET) {
     stringUrl = `${baseUrl}/reset-password?token=${token}`;
-
     stringSubject = "パスワード再設定";
-
     stringHtml = `
       <h1>${stringSubject}</h1>
 
@@ -69,18 +64,6 @@ export async function sendVerificationEmail(
     `;
   }
 
-  const mailProvider = getMailProvider();
-
-  try {
-    const result = await mailProvider.send({
-      to: email,
-      subject: stringSubject,
-      html: stringHtml,
-    });
-
-    console.log("send result", result);
-  } catch (error) {
-    console.error("send error", error);
-  }
+  sendEmail(email,stringUrl,stringSubject,stringHtml);
 
 }

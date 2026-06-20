@@ -20,14 +20,3 @@ export function getCanResendVerificationEmailFromStringDate(stringDate:string|nu
 
   return canResendVerificationEmail
 }
-
-export function getCanResendVerificationEmailFromSessionForClient(session:Session|null): boolean {
-  let canResendVerificationEmail:boolean = false;
-
-  if(session && session.user){
-    canResendVerificationEmail
-    = getCanResendVerificationEmailFromStringDate(session.user.emailVerifiedAt);
-  }//session
-
-  return canResendVerificationEmail
-}

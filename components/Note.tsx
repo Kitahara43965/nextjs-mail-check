@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import type {Note} from "@prisma/client"
 import { z } from "zod";
 
-export default function NoteComponent() {
+export default function Note() {
   const [notes, setNotes] = useState<Note[]>([]);
   const [loading, setLoading] = useState(true);
 

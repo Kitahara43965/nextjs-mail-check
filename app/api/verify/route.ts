@@ -9,7 +9,7 @@ export async function GET(req: Request) {
 
 
   if (!token) {
-    return NextResponse.redirect(`${baseUrl}/verify`);
+    return NextResponse.redirect(`${baseUrl}/verify?reason=invalid_token`);
   }
 
   const authToken = await prisma.authToken.findFirst({

@@ -52,10 +52,12 @@ export async function POST(req: Request) {
     }//emailUser
   }//authTokenType
   
+
   resendVerificationResult = await resendVerification(
     userId,
     resendVerificationKind,
   );
+
 
   return NextResponse.json(resendVerificationResult);
 }

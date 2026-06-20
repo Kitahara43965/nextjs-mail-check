@@ -1,3 +1,5 @@
+## 認証フローと権限制御を持つダッシュボードアプリ（Next.js + NextAuth）
+# mailhogアプリの構築
 mac版です。<br>
 $はターミナルに入力する内容です。<br>
 (1) git cloneします。<br>
@@ -11,6 +13,7 @@ $ npm install<br>
 <br>
 (4) postgresql起動<br>
 $ brew services start postgresql<br>
+<br>
 (5) (ローカルの場合のみ)postgresqlデータベース作成<br>
 ここでは PostgreSQL のユーザー名を memouser、データベース名を memoapp としています。<br>
 ユーザーとベータベースが存在するか確認します。<br>
@@ -22,10 +25,10 @@ $ \l<br>
 $ exit<br>
 です。<br>
 nextjs-mail-checkディレクトリに移動します<br>
-「名前」にmemoappがなければ<br>
-$ createdb memoapp -O memouser <br>
 「所有者」にmemouserがなければ<br>
 $ createuser memouser -P<br>
+「名前」にmemoappがなければ<br>
+$ createdb memoapp -O memouser <br>
 「新しいロールのためのパスワード」、「もう一度入力してください」では任意の同じ1文字以上の半角英語パスワードを入力します<br>
 memouserに権限をつけます。<br>
 $ psql memoapp<br>
@@ -92,7 +95,7 @@ $ npm run dev<br>
 <br>
 (11) mailhog起動のために別途terminalを立ち上げます<br>
 この項目は.env
-現在のプロジェクト直下(名称を変更していなければnextjs-email-auth)で<br>
+現在のプロジェクト直下(名称を変更していなければnextjs-mail-check)で<br>
 mailhogをインストールしていない場合はbrew経由でインストール<br>
 $ brew install go<br>
 $ go install github.com/mailhog/MailHog@latest<br>
@@ -100,21 +103,55 @@ $ export PATH=$PATH:$(go env GOPATH)/bin<br>
 以下のコマンドでmailhog立ち上げ<br>
 $ mailhog<br>
 <br>
-万が一画面が固まってしまう場合、再度同じurlでページに入っていただければ、動くようになります。<br>
-<br>
 (12) db可視化のため別途terminal立ち上げます<br>
-現在のプロジェクト直下(名称を変更していなければnextjs-email-auth)で<br>
+現在のプロジェクト直下(名称を変更していなければnextjs-mail-check)で<br>
 $npx prisma studio<br>
 と入力すれば、dbを確認できます。<br>
+■ 開発環境<br>
+MailHogを使用（ローカルメール確認）<br>
+■ 本番環境<br>
+Resendで送信可能<br>
+環境変数で切り替え<br>
 <br>
-<br>■ 開発環境
-<br>MailHogを使用（ローカルメール確認）
+(13) 画面について、cssが適用されない場合は<br>
+$rm -rf .next<br>
+$npm run dev<br>
+で改善する場合があります。<br>
+
+# 技術スタック
+フロントエンド<br>
+Next.js（App Router）<br>
+React<br>
+TypeScript<br>
+Fetch API<br>
 <br>
-<br>■ 本番環境
-<br>Resendで送信可能
-<br>環境変数で切り替え
+バックエンド<br>
+Next.js API Routes<br>
+NextAuth.js（認証）<br>
 <br>
-(13)アーキテクチャ図<br>
+データベース<br>
+PostgreSQL 18<br>
+Prisma 5（ORM）<br>
+<br>
+バリデーション<br>
+Zod<br>
+<br>
+インフラ・ホスティング<br>
+Vercel<br>
+<br>
+
+# ER図
+<img width="641" height="391" alt="Image" src="https://github.com/user-attachments/assets/98810bf1-4698-458c-80a2-114cb92f6b3e" />
+<br>
+
+# 画面
+登録画面：localhost:3000/register<br>
+ログイン画面： localhost:3000/login<br>
+ダッシュボード画面：localhost:3000/dashboard<br>
+mailhogメール受信画面: localhost:8025<br>
+prisma studio(DB確認): http://localhost:5555<br>
+
+# アーキテクチャ図
 User<br>
  ↓（HTTPS / DNS管理・セキュリティ）<br>
 Cloudflare<br>
@@ -123,9 +160,4 @@ Vercel（Next.js）<br>
  ↓（認証・業務データ）<br>
 PostgreSQL<br>
 <br>
-
-登録画面：localhost:3000/register<br>
-ログイン画面： localhost:3000/login<br>
-ダッシュボード画面：localhost:3000/dashboard<br>
-mailhogメール受信画面: localhost:8025<br>
-prisma studio(DB確認): http://localhost:5555<br>
+万が一画面が固まってしまう場合、再度同じurlでページに入っていただければ、動くようになります。<br>

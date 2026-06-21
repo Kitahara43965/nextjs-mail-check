@@ -24,6 +24,8 @@ export default function LogoutButton() {
       channel.close();
     }//channel
 
+    router.replace("/login");
+
   };
 
 

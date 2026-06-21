@@ -27,6 +27,8 @@ export async function checkRedirectToVerify(
       }else{//stringEmailVerifiedAt
         redirect(`/verify?reason=before_server_component_from_${pageRouteKind}`);
       }//stringEmailVerifiedAt
+    }else{
+
     }//user
   }//pageRouteKind
   

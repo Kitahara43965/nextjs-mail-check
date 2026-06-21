@@ -3,6 +3,8 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { prisma } from "@/lib/prisma";
 import { verifyPassword } from "@/lib/crypto";
 import type { NextAuthOptions } from "next-auth";
+import {getCanResendVerificationEmailFromStringDate}
+ from "@/services/tool/can-resend-verification-email.service";
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
@@ -32,6 +34,7 @@ export const authOptions: NextAuthOptions = {
         if (!user) return null;
 
         const ok = await verifyPassword(credentials.password, user.password);
+
         if (!ok) return null;
 
         await prisma.user.update({
@@ -40,6 +43,7 @@ export const authOptions: NextAuthOptions = {
             loginTimeNumber: { increment: 1 },
           },
         });
+
 
         return {
           id: user.id,

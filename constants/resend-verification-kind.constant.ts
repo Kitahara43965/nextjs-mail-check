@@ -5,8 +5,7 @@ export const ResendVerificationKind = {
   REGISTER: 1,
   LOGIN: 2,
   MAIL_RESENDING:3,
-  DASHBOARD:4,
-  REQUEST_PASSWORD_RESET:5,
+  REQUEST_PASSWORD_RESET:4,
 } as const;
 
 

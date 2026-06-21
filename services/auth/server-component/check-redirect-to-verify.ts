@@ -9,23 +9,25 @@ export async function checkRedirectToVerify(
   pageRouteKind:PageRouteKind,
 ) {
   let stringEmailVerifiedAt:string|null = null;
-
-  if(user){
-    if(user.emailVerifiedAt){
-
-      stringEmailVerifiedAt =
-        user.emailVerifiedAt.toISOString();
         
-      if(pageRouteKind !== PageRouteKind.VERIFY){
+  if(pageRouteKind !== PageRouteKind.VERIFY){
+    if(user){
+      if(user.emailVerifiedAt){
+        stringEmailVerifiedAt =
+          user.emailVerifiedAt.toISOString();
+      }
+      if(stringEmailVerifiedAt){
         if(
           getCanResendVerificationEmailFromStringDate(
             stringEmailVerifiedAt
-          )
+          ) === true
         ){
           redirect(`/verify?reason=before_server_component_from_${pageRouteKind}`);
         }
-      }//pageRouteKind
-    } 
-  }//user
+      }else{//stringEmailVerifiedAt
+        redirect(`/verify?reason=before_server_component_from_${pageRouteKind}`);
+      }//stringEmailVerifiedAt
+    }//user
+  }//pageRouteKind
   
 }

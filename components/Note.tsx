@@ -3,8 +3,12 @@
 import { useEffect, useState } from "react";
 import type {Note} from "@prisma/client"
 import { z } from "zod";
+import { useRouter } from "next/navigation";
+import { getAuthBroadcastChannel } from "@/lib/auth/get-auth-broadcast-channel";
+
 
 export default function Note() {
+  const router = useRouter();
   const [notes, setNotes] = useState<Note[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -54,8 +58,27 @@ export default function Note() {
     }
   };
 
+
   useEffect(() => {
     fetchNotes();
+    
+    const handler = () => {
+      if (document.visibilityState === "visible") {
+        router.refresh();
+      }
+    };
+
+    document.addEventListener(
+      "visibilitychange",
+      handler
+    );
+
+    return () => {
+      document.removeEventListener(
+        "visibilitychange",
+        handler
+      );
+    };
   }, []);
 
   // ========= create =========

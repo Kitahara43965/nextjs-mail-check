@@ -13,8 +13,10 @@ export default function RootLayout({
     <html lang="ja">
       <body>
         <Providers>
-          <Header />
-          {children}
+          <AuthBroadcastChannelProvider>
+            <Header />
+            {children}
+          </AuthBroadcastChannelProvider>
         </Providers>
       </body>
     </html>

@@ -51,11 +51,13 @@ export async function resendVerification(
         orderBy: { createdAt: "desc" },
       });
 
-    if(user.emailVerifiedAt){
-      stringEmailVerifiedAt = user.emailVerifiedAt.toISOString();
-    }//user.emailVerifiedAt
+    stringEmailVerifiedAt = user.emailVerifiedAt ? user.emailVerifiedAt.toISOString() : null;
 
-    canResendVerificationEmail = getCanResendVerificationEmailFromStringDate(stringEmailVerifiedAt);
+    if(stringEmailVerifiedAt){
+      canResendVerificationEmail = getCanResendVerificationEmailFromStringDate(stringEmailVerifiedAt);
+    }else{//stringEmailVerifiedAt
+      canResendVerificationEmail = true;
+    }//stringEmailVerifiedAt
 
     if (resendVerificationKind === ResendVerificationKind.REGISTER) {
       resendVerificationError = ResendVerificationError.UNDEFINED;

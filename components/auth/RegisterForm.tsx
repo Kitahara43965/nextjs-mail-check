@@ -52,28 +52,26 @@ export default function RegisterForm() {
         return;
       }
 
-      const registerResponse = await signIn("credentials", {
+      const signInResponse = await signIn("credentials", {
         email,
         password,
         redirect: false,
       });
 
-      if (registerResponse?.error) {
+      if (signInResponse?.error) {
         setRegisterErrors({
           general: "自動ログインに失敗しました。手動でログインしてください",
         });
       } else {
-        if (registerResponse?.ok) {
-          authBroadcastChannel.current?.postMessage({
-            type: "LOGIN",
-          });
-
-          await getSession();
-          router.push("/verify?reason=register");
+        if (signInResponse?.ok) {
+          if(authBroadcastChannel.current){
+            authBroadcastChannel.current.postMessage({
+              type: "LOGIN",
+            });
+          }//authBroadcastChannel.current
+          getSession();
+          router.replace("/dashboard?reason=register");
         }
-
-        return;
-
       }
     } catch {
       setRegisterErrors({ general: "サーバーエラーが発生しました" });

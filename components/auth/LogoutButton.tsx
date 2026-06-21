@@ -13,20 +13,16 @@ export default function LogoutButton() {
 
     const channel = getAuthBroadcastChannel();
 
-    if(channel){
-
-      channel.postMessage({
-        type:"LOGOUT",
-      });
-
-      channel.close();
-    }
-
     await signOut({
       redirect:false,
     });
 
-    router.replace("/login");
+    if(channel){
+      channel.postMessage({
+        type:"LOGOUT",
+      });
+      channel.close();
+    }//channel
 
   };
 

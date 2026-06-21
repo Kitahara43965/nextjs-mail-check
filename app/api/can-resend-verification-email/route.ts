@@ -25,8 +25,13 @@ export async function GET() {
     stringEmailVerifiedAt = user.emailVerifiedAt.toISOString();
   }//user.emailVerifiedAt
 
-  canResendVerificationEmailFromStringDate
-   = getCanResendVerificationEmailFromStringDate(stringEmailVerifiedAt);
+  if(stringEmailVerifiedAt){
+    canResendVerificationEmailFromStringDate
+    = getCanResendVerificationEmailFromStringDate(stringEmailVerifiedAt);
+  }else{//stringEmailVerifiedAt
+    canResendVerificationEmailFromStringDate = true;
+  }//stringEmailVerifiedAt
+
 
   return Response.json({
     isLoggedIn:isLoggedIn,

@@ -14,10 +14,22 @@ export default async function VerifyPage({
   const params = await searchParams;
   const reason = params.reason ?? null;
   const verifyMessage = getVerifyMessage(reason);
-  const user = getServerSessionUser();
+  const user = await getServerSessionUser();
+  let userName:string|null = null;
+  let userEmail:string|null = null;
+
+  if(user){
+    userName = user.name;
+    userEmail = user.email;
+  }else{
+    userName = "no user";
+    userEmail = null;
+  }
 
   return (
     <VerifyClient
+      userName={userName}
+      userEmail={userEmail}
       verifyMessage={verifyMessage}
       reason={reason}
     />

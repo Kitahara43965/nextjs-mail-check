@@ -65,7 +65,7 @@ export default function LoginForm() {
       }
   
       try {
-        const signInResult = await signIn("credentials", {
+        const signInResponse = await signIn("credentials", {
           email,
           password,
           redirect: false,
@@ -83,20 +83,20 @@ export default function LoginForm() {
         });
         const data = await res.json();
   
-        if (signInResult?.error) {
+        if (signInResponse?.error) {
           setLoginErrors({
             general: "メールアドレスまたはパスワードが間違っています",
           });
   
           return;
         }
-        if(signInResult?.ok){
-          if(authBroadcastChannel){
-            authBroadcastChannel.current?.postMessage({
+        if(signInResponse?.ok){
+          if(authBroadcastChannel && authBroadcastChannel.current){
+            authBroadcastChannel.current.postMessage({
               type: "LOGIN"
             });
           }//authBroadcastChannel
-          await getSession();
+          getSession();
           router.replace("/dashboard?reason=login");
         }
 

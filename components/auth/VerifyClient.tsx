@@ -6,30 +6,20 @@ import { useEffect } from "react";
 
 import { ResendVerificationKind } from "@/constants/resend-verification-kind.constant";
 import { ResendVerificationError } from "@/constants/resend-verification-error.constant";
-import { getAuthBroadcastChannel } from "@/lib/auth/get-auth-broadcast-channel";
 
 type VerifyClientProps = {
+  userName:string|null
+  userEmail:string|null;
   verifyMessage: string;
   reason: string|null;
 };
 
 export default function VerifyClient({
+  userName,
+  userEmail,
   verifyMessage,
   reason,
 }: VerifyClientProps) {
-  useEffect(()=>{
-
-    const channel = getAuthBroadcastChannel();
-
-    channel?.postMessage({
-      type:"SESSION_EXPIRED"
-    });
-
-    return ()=>{
-      channel?.close();
-    };
-
-  },[]);
   
   const router = useRouter();
 
@@ -56,7 +46,7 @@ export default function VerifyClient({
           body: JSON.stringify({
             resendVerificationKind:
               ResendVerificationKind.MAIL_RESENDING,
-            email: null,
+            email: userEmail,
           }),
         }
       );
@@ -128,6 +118,10 @@ export default function VerifyClient({
         <h1 className="text-2xl font-bold mb-4">
           メール認証が必要です
         </h1>
+
+        <p className="text-gray-600 mb-6">
+          こんにちは {userName} さん。
+        </p>
 
         <p className="text-gray-600 mb-6">
           {verifyMessage}

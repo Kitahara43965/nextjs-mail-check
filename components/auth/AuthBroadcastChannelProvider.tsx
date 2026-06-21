@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { getAuthBroadcastChannel } from "@/lib/auth/get-auth-broadcast-channel";
-import { signOut } from "next-auth/react";
+import { signOut,getSession } from "next-auth/react";
 
 export default function AuthBroadcastChannelProvider({
   children,
@@ -14,28 +14,24 @@ export default function AuthBroadcastChannelProvider({
 
   useEffect(() => {
     const authBroadcastChannel = getAuthBroadcastChannel();
-
-    if (!authBroadcastChannel) return;
-
     const handler = async (event: MessageEvent) => {
-      switch (event.data?.type) {
-        case "LOGIN":
-          break;
-
-        case "LOGOUT":
-          break;
-
-        case "SESSION_EXPIRED":
-          break;
-      }
+        switch (event.data?.type) {
+          case "LOGIN":
+            router.refresh();
+            break;
+          case "LOGOUT":
+            router.refresh();
+            break;
+        }
     };
 
-    authBroadcastChannel.onmessage = handler;
-
-    return () => {
-      authBroadcastChannel.onmessage = null;
-      authBroadcastChannel.close();
-    };
+    if (authBroadcastChannel){
+      authBroadcastChannel.onmessage = handler;
+      return () => {
+        authBroadcastChannel.onmessage = null;
+        authBroadcastChannel.close();
+      };
+    }//authBroadcastChannel
 
   }, [router]);
 

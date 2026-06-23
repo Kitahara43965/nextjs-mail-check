@@ -7,14 +7,14 @@ import {ResendVerificationStatus} from "@/constants/resend-verification-status.c
 import { 
   ResendVerificationKind,
   getAuthTokenTypeFromResendVerificationKind 
-} from "@/constants/resend-verification-kind.constant";
+} from "@/enums/resend-verification-kind.enum";
 import {getCanResendVerificationEmailFromStringDate}
  from "@/services/tool/can-resend-verification-email.service";
 import { AuthTokenType } from "@prisma/client";
 
 export async function resendVerification(
   userId: string | null,
-  resendVerificationKind: number,
+  resendVerificationKind: ResendVerificationKind,
 ): Promise<ResendVerificationResult> {
   const now = new Date();
   let user: User | null = null;

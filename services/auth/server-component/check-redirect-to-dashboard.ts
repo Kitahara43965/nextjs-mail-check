@@ -4,14 +4,14 @@ import {getCanResendVerificationEmailFromStringDate}
   from "@/services/tool/can-resend-verification-email.service";
 import { PageRouteKind } from "@/enums/page-route-kind.enum";
 
-export async function checkRedirectToVerify(
+export async function checkRedirectToDashboard(
   user:User|null,
   pageRouteKind:PageRouteKind,
 ) {
   let stringEmailVerifiedAt:string|null = null;
   let stringRedirectedRoute:string|null = null;
         
-  if(pageRouteKind !== PageRouteKind.VERIFY){
+  if(pageRouteKind !== PageRouteKind.DASHBOARD){
     if(user){
       if(user.emailVerifiedAt){
         stringEmailVerifiedAt =
@@ -21,16 +21,14 @@ export async function checkRedirectToVerify(
         if(
           getCanResendVerificationEmailFromStringDate(
             stringEmailVerifiedAt
-          ) === true
+          ) === false
         ){
-          stringRedirectedRoute = `/verify?reason=before_server_component_from_${pageRouteKind}`;
+          stringRedirectedRoute = `/dashboard?reason=before_server_component_from_${pageRouteKind}`;
         }
-      }else{//stringEmailVerifiedAt
-        stringRedirectedRoute = `/verify?reason=before_server_component_from_${pageRouteKind}`;
       }//stringEmailVerifiedAt
     }//user
   }//pageRouteKind
-  
+
   if(stringRedirectedRoute){
     redirect(stringRedirectedRoute);
   }//stringRedirectedRoute

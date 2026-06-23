@@ -1,7 +1,7 @@
 "use client";
 
 import { redirect } from "next/navigation";
-import { signOut } from "next-auth/react";
+import { signOut,getSession } from "next-auth/react";
 import { getAuthBroadcastChannel } from "@/lib/auth/get-auth-broadcast-channel";
 import { useRouter } from "next/navigation";
 
@@ -11,18 +11,21 @@ export default function LogoutButton() {
 
   const handleLogout = async () => {
 
-    const channel = getAuthBroadcastChannel();
+    const authBroadcastChannel = getAuthBroadcastChannel();
 
     await signOut({
       redirect:false,
     });
 
-    if(channel){
-      channel.postMessage({
+    if(authBroadcastChannel){
+      authBroadcastChannel.postMessage({
         type:"LOGOUT",
       });
-      channel.close();
-    }//channel
+
+      setTimeout(() => {
+        authBroadcastChannel.close();
+      }, 100);
+    }//authBroadcastChannel
 
     router.replace("/login");
 

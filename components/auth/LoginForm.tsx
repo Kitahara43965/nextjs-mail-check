@@ -5,8 +5,9 @@ import { getAuthBroadcastChannel } from "@/lib/auth/get-auth-broadcast-channel";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { LoginErrors } from "@/types/auth";
-import { ResendVerificationKind } from "@/constants/resend-verification-kind.constant";
+import { ResendVerificationKind } from "@/enums/resend-verification-kind.enum";
 import { z } from "zod";
+import { useSession } from "next-auth/react";
 
 /** Zod schema */
 const loginSchema = z.object({
@@ -29,6 +30,7 @@ export default function LoginForm() {
   const router = useRouter();
   const authBroadcastChannel =
     useRef<BroadcastChannel | null>(null);
+  const {data: session,status} = useSession();
 
   useEffect(() => {
 
@@ -71,7 +73,7 @@ export default function LoginForm() {
           redirect: false,
         });
 
-        const res = await fetch("/api/resend-verification", {
+        await fetch("/api/resend-verification", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -81,7 +83,6 @@ export default function LoginForm() {
             email:null,
           }),
         });
-        const data = await res.json();
   
         if (signInResponse?.error) {
           setLoginErrors({
@@ -96,7 +97,7 @@ export default function LoginForm() {
               type: "LOGIN"
             });
           }//authBroadcastChannel
-          getSession();
+          await getSession();
           router.replace("/dashboard?reason=login");
         }
 
@@ -161,11 +162,12 @@ export default function LoginForm() {
         {/* Login Button */}
         <button
           onClick={handleLogin}
-          disabled={loading}
+          disabled={loading ? true : session? true : false}
           className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition disabled:bg-gray-400"
         >
-          {loading ? "ログイン中..." : "ログイン"}
+          {loading ? "ログイン中..." : session ? "ログイン中..." : "ログイン"}
         </button>
+
 
         {/* Links */}
         <button

@@ -2,7 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { hashPassword } from "@/lib/crypto";
 import { RegisterErrors } from "@/types/auth";
 import { resendVerification } from "@/services/auth/resend-verification.service";
-import { ResendVerificationKind } from "@/constants/resend-verification-kind.constant";
+import { ResendVerificationKind } from "@/enums/resend-verification-kind.enum";
 
 import { z } from "zod";
 

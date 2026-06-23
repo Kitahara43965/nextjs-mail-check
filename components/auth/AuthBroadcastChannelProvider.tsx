@@ -14,24 +14,28 @@ export default function AuthBroadcastChannelProvider({
 
   useEffect(() => {
     const authBroadcastChannel = getAuthBroadcastChannel();
+    
     const handler = async (event: MessageEvent) => {
+        
         switch (event.data?.type) {
           case "LOGIN":
             router.refresh();
             break;
           case "LOGOUT":
-            router.refresh();
+            window.location.href = "/login";
             break;
         }
     };
 
     if (authBroadcastChannel){
       authBroadcastChannel.onmessage = handler;
-      return () => {
-        authBroadcastChannel.onmessage = null;
-        authBroadcastChannel.close();
-      };
     }//authBroadcastChannel
+
+    return () => {
+      if(authBroadcastChannel){
+        authBroadcastChannel.close();
+      }//authBroadcastChannel
+    };
 
   }, [router]);
 

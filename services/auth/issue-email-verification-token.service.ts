@@ -2,14 +2,13 @@ import { sendVerificationEmail } from "@/services/auth/draw/send-verification-em
 import { prisma} from "@/lib/prisma";
 import { AuthTokenType } from "@prisma/client";
 import crypto from "crypto";
-import type { User, AuthToken } from "@prisma/client";
-import {getAuthTokens} from "@/services/tool/get-auth-tokens.service";
+import {ResendVerificationKind} from "@/enums/resend-verification-kind.enum";
 
 
 export async function issueEmailVerificationToken(
   userId: string,
   email: string,
-  resendVerificationKind: number,
+  resendVerificationKind: ResendVerificationKind,
   authTokenType:AuthTokenType,
 ) {
   const token = crypto.randomBytes(32).toString("hex");

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { z } from "zod";
-import { ResendVerificationKind } from "@/constants/resend-verification-kind.constant";
+import { ResendVerificationKind } from "@/enums/resend-verification-kind.enum";
 
 const schema = z.object({
   email: z
@@ -43,7 +43,7 @@ export default function RequestPasswordResetForm() {
 
     try {
 
-      const res = await fetch(
+      await fetch(
         "/api/resend-verification",
         {
           method: "POST",
@@ -57,16 +57,6 @@ export default function RequestPasswordResetForm() {
           }),
         }
       );
-
-
-      const data = await res.json();
-
-
-      if (!res.ok) {
-        setError(data?.error ?? "送信に失敗しました");
-        return;
-      }
-
 
       setDone(true);
 

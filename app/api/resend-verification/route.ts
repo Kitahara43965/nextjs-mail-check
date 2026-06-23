@@ -3,28 +3,27 @@ import { authOptions } from "@/lib/auth";
 import { resendVerification } from "@/services/auth/resend-verification.service";
 import { ResendVerificationResult } from "@/types/resend-verification-result.type";
 import { ResendVerificationRequest } from "@/types/resend-verification-request.type";
-import { ResendVerificationKind} from "@/constants/resend-verification-kind.constant";
+import { ResendVerificationKind} from "@/enums/resend-verification-kind.enum";
 import type { User} from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   const session = await getServerSession(authOptions);
-  let body:ResendVerificationRequest|null = null;
-  let resendVerificationResult: ResendVerificationResult | null = null;
+  let resendVerificationRequest:ResendVerificationRequest|null = null;
   let email:string|null = null;
   let emailUser: User|null = null;
   let userId: string|null = null;
-  let resendVerificationKind:number = ResendVerificationKind.UNDEFINED;
+  let resendVerificationKind:ResendVerificationKind = ResendVerificationKind.UNDEFINED;
 
   if(req){
-    body = await req.json();
+    resendVerificationRequest = await req.json();
   }//req
 
-  if(body){
-    resendVerificationKind = body.resendVerificationKind;
-    email = body.email;
-  }//body
+  if(resendVerificationRequest){
+    resendVerificationKind = resendVerificationRequest.resendVerificationKind;
+    email = resendVerificationRequest.email;
+  }//resendVerificationRequest
 
   if(typeof email === "string"){
     emailUser = await prisma.user.findUnique({
@@ -51,11 +50,10 @@ export async function POST(req: Request) {
     }//emailUser
   }//resendVerificationKind
 
-  resendVerificationResult = await resendVerification(
+  await resendVerification(
     userId,
     resendVerificationKind,
   );
 
-
-  return NextResponse.json(resendVerificationResult);
+  return NextResponse.json({});
 }

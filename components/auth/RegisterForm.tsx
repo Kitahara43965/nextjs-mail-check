@@ -5,9 +5,12 @@ import { getAuthBroadcastChannel } from "@/lib/auth/get-auth-broadcast-channel";
 import { useState,useRef,useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { RegisterErrors } from "@/types/auth";
+import { useSession } from "next-auth/react";
+
 
 export default function RegisterForm() {
   const authBroadcastChannel = useRef<BroadcastChannel | null>(null);
+  const {data: session,status} = useSession();
 
   useEffect(() => {
     authBroadcastChannel.current = getAuthBroadcastChannel();
@@ -17,6 +20,7 @@ export default function RegisterForm() {
       authBroadcastChannel.current = null;
     };
   }, []);
+
 
   const router = useRouter();
   const [name, setName] = useState("");
@@ -69,7 +73,7 @@ export default function RegisterForm() {
               type: "LOGIN",
             });
           }//authBroadcastChannel.current
-          getSession();
+          await getSession();
           router.replace("/dashboard?reason=register");
         }
       }
@@ -153,10 +157,10 @@ export default function RegisterForm() {
         {/* Register Button */}
         <button
           onClick={handleRegister}
-          disabled={loading}
+          disabled={loading ? true : session? true : false}
           className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition disabled:bg-gray-400"
         >
-          {loading ? "登録中..." : "会員登録"}
+          {loading ? "登録中..." : session ? "登録中..." : "会員登録"}
         </button>
 
         {/* Login Link */}

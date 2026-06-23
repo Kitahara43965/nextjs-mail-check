@@ -4,8 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
-import { ResendVerificationKind } from "@/constants/resend-verification-kind.constant";
-import { ResendVerificationError } from "@/constants/resend-verification-error.constant";
+import { ResendVerificationKind } from "@/enums/resend-verification-kind.enum";
 
 type VerifyClientProps = {
   userName:string|null
@@ -35,8 +34,7 @@ export default function VerifyClient({
     setMessage(null);
 
     try {
-      const res = await fetch(
-        "/api/resend-verification",
+      await fetch("/api/resend-verification",
         {
           method: "POST",
           headers: {
@@ -50,19 +48,6 @@ export default function VerifyClient({
           }),
         }
       );
-
-      const data = await res.json();
-
-      if (
-        data.resendVerificationError !==
-        ResendVerificationError.UNDEFINED
-      ) {
-        setMessage(
-          data.resendVerificationError ||
-            "送信に失敗しました"
-        );
-        return;
-      }
 
       setMessage(
         "認証メールを送信しました！"

@@ -1,16 +1,16 @@
 import { AuthTokenType } from "@prisma/client";
 
-export const ResendVerificationKind = {
-  UNDEFINED: 0,
-  REGISTER: 1,
-  LOGIN: 2,
-  MAIL_RESENDING:3,
-  REQUEST_PASSWORD_RESET:4,
-} as const;
+export enum ResendVerificationKind {
+  UNDEFINED = "undefined",
+  REGISTER = "register",
+  LOGIN = "login",
+  MAIL_RESENDING = "mail-resending",
+  REQUEST_PASSWORD_RESET = "request-password-reset",
+}
 
 
 export function getAuthTokenTypeFromResendVerificationKind(
-  resendVerificationKind:number
+  resendVerificationKind:ResendVerificationKind
 ):AuthTokenType{
   switch (resendVerificationKind) {
       case ResendVerificationKind.REGISTER:
@@ -25,5 +25,3 @@ export function getAuthTokenTypeFromResendVerificationKind(
         return AuthTokenType.UNDEFINED;
     }
 }//getAuthTokenTypeFromResendVerificationKind
-
-

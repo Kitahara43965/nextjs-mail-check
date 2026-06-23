@@ -7,7 +7,7 @@ import { useSession } from "next-auth/react";
 
 export default function Header() {
 
-  const { data: session } = useSession();
+  const {data: session,status} = useSession();
 
   return (
     <header className="flex items-center justify-between px-6 py-3 border-b">
@@ -18,7 +18,9 @@ export default function Header() {
 
       <nav className="flex items-center gap-4">
 
-        {session ? (
+        {status === "loading" ? (
+          <span>待機中...</span>
+        ) : session ? (
           <>
             <Link href="/dashboard">
               ダッシュボード

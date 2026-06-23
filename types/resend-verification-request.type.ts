@@ -1,4 +1,6 @@
+import { ResendVerificationKind } from "@/enums/resend-verification-kind.enum";
+
 export type ResendVerificationRequest = {
-  resendVerificationKind: number;
+  resendVerificationKind: ResendVerificationKind;
   email:string|null;
 };

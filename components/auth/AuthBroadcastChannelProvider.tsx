@@ -22,7 +22,7 @@ export default function AuthBroadcastChannelProvider({
             router.refresh();
             break;
           case "LOGOUT":
-            window.location.href = "/login";
+            router.replace("/login");
             break;
         }
     };

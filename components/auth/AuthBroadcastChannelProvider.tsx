@@ -19,7 +19,7 @@ export default function AuthBroadcastChannelProvider({
         
         switch (event.data?.type) {
           case "LOGIN":
-            router.refresh();
+            router.replace("/dashboard");
             break;
           case "LOGOUT":
             router.replace("/login");

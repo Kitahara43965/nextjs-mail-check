@@ -27,6 +27,7 @@ export default function LogoutButton() {
       }, 100);
     }//authBroadcastChannel
 
+    getSession();
     router.replace("/login");
 
   };
